@@ -115,7 +115,7 @@ public class UserDAO {
                 u.setIsAdmin(rs.getString(6));
                 u.setTimestamp(rs.getTimestamp(7));
                 u.setIsActive(rs.getString(8));
-                u.setAddress(rs.getString(8));
+                u.setAddress(rs.getString(9));
                 users.add(u);
             }
         } catch (SQLException e) {
@@ -142,7 +142,7 @@ public class UserDAO {
                 u.setIsAdmin(rs.getString(6));
                 u.setTimestamp(rs.getTimestamp(7));
                 u.setIsActive(rs.getString(8));
-                u.setAddress(rs.getString(8));
+                u.setAddress(rs.getString(9));
                 users.add(u);
             }
         } catch (SQLException e) {
