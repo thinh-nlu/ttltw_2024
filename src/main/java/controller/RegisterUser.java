@@ -40,7 +40,7 @@ public class RegisterUser extends HttpServlet {
         String address = req.getParameter("address").trim();
         String hashPassword = hashPassword(password);
 
-        User user = new User(username,email,hashPassword,contact,"1","1",address);
+        User user = new User(username,email,hashPassword,contact,"1","1",address,"27.2.16.228");
         HttpSession session = req.getSession();
         UserDAO dao = new UserDAO(DBConnect.getConnection());
         List<User> users = dao.getAllUser();

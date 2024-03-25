@@ -14,6 +14,8 @@ public class User {
 
     private String address;
 
+    private String ip;
+
 
 
     public User(){}
@@ -27,7 +29,7 @@ public class User {
         this.isActive = isActive;
     }
 
-    public User(String name, String email, String password, String contact, String isAdmin, String isActive, String address) {
+    public User(String name, String email, String password, String contact, String isAdmin, String isActive, String address, String ip) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -35,6 +37,7 @@ public class User {
         this.isAdmin = isAdmin;
         this.isActive = isActive;
         this.address = address;
+        this.ip = ip;
     }
 
     public int getId() {
@@ -102,7 +105,9 @@ public class User {
         this.isActive = isActive;
     }
 
+    public String getIp() {return ip;}
 
+    public void setIp(String ip) {this.ip = ip;}
 
     @Override
     public String toString() {
