@@ -16,7 +16,9 @@
   OrderDAO dao = new OrderDAO(DBConnect.getConnection());
   UserDAO userDAO = new UserDAO(DBConnect.getConnection());
   if(user!=null) orderList = dao.getAllOrder();
+
 %>
+
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
@@ -204,12 +206,14 @@
     </tr>
     </thead>
     <tbody class="bg-light text-dark">
+
     <%for(Order o: orderList) {
     %>
+
     <tr class='text-center text-dark font-weight-normal  '>
       <td><%=o.getId()%></td>
-      <td><%=userDAO.getUserById(o.getUserId()).getName()%></td>
-      <td><%=o.getAmountDue() + "VND"%></td>
+      <td><%= (userDAO.getUserById(o.getUserId()) != null) ? userDAO.getUserById(o.getUserId()).getName() : "Không xác định" %></td>
+      <td><%=o.getAmountDue() + " VND"%></td>
       <td><%=o.getInvoiceNumber()%></td>
       <td><%=o.getOrderDate()%></td>
       <td><%=o.getOrderStatus().equals("complete") ? "Đã thanh toán" : "Đang chờ xử lý"%></td>
