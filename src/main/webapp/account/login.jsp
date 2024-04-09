@@ -175,7 +175,7 @@
 			<div class="signin-content">
 				<div class="row justify-content-center">
 					<div class="signin-form">
-						<h2 class="form-title mt-2">Đăng Nhập</h2>
+						<h1 class="form-title mt-2 text-center text-uppercase">Đăng Nhập</h1>
 						<%
 							if(failedMessage!=null) {
 						%>
@@ -183,57 +183,73 @@
 						<%}
 							session.removeAttribute("failed");
 						%>
+
 						<form method="post" action="../login" class="mt-3" id="formLogin">
-							<div class="form-col md-3">
-								<%
-									if(cookies!=null) {
-										for (Cookie c : cookies) {
-											if ("cookieUser".equals(c.getName())) {
-												username = c.getValue();
-											} else if ("cookiePass".equals(c.getName())) {
-												password = c.getValue();
-											} else if ("cookieRem".equals(c.getName())) {
-												remember = c.getValue();
-											}
+							<%
+								if(cookies!=null) {
+									for (Cookie c : cookies) {
+										if ("cookieUser".equals(c.getName())) {
+											username = c.getValue();
+										} else if ("cookiePass".equals(c.getName())) {
+											password = c.getValue();
+										} else if ("cookieRem".equals(c.getName())) {
+											remember = c.getValue();
 										}
 									}
-								%>
-
-								<div class="form-group">
-									<label for="name" class="mb-0">Tên Đăng Nhập</label>
-									<input type="text" class="form-control" id="name" name="name" value="<%=username%>" placeholder="" >
-								</div>
-								<div class="form-group">
-									<label for = "password" class="mb-0">Mật Khẩu</label>
-									<input type="password" class="form-control" id="password" name="password" value="<%=password%>" placeholder="" >
-								</div>
-								<div>
-									<div class="form-check mb-3">
-									<input class="form-check-input" type="checkbox"  id="remember" name="remember" value="ON"
-									>
-									<label class="form-check-label" for="remember">
-										Lưu Mật Khẩu
-									</label>
-									<a href="forgotPassword.jsp" class="ml-5">Quên mật khẩu</a>
-
-								</div>
-								</div>
+								}
+							%>
+							<!-- Email input -->
+							<div class="form-group ">
+								<label for="name" class="mb-0">Tên Đăng Nhập</label>
+								<input type="text" class="form-control" id="name" name="name" value="<%=username%>" placeholder="" >
 							</div>
-							<div class="mb-2">
-								<button type="submit" class="btn hvr-hover ">Đăng Nhập</button>
-
-								<p>Bạn chưa có tài khoản? <a href="registration.jsp">Đăng Ký Ngay</a></p>
-								<h4 class="">Hoặc đăng nhập bằng :
-									<a href="https://www.facebook.com/dialog/oauth?client_id=390038746860422&redirect_uri=http://localhost:8080/cuoiki_war_exploded/login_facebook" class="btn btn-primary btn-sm"><i class=" bi-facebook bg-primary align-content-center"></i></a>
-									<a href="https://accounts.google.com/o/oauth2/auth?scope=profile email&redirect_uri=http://localhost:8080/cuoiki_war_exploded/loginGoogle&response_type=code&client_id=257156793950-querl7dnqmaq9cjfa1ou89sslsa6cof0.apps.googleusercontent.com&approval_prompt=force" class="btn btn-danger btn-sm">
-										<i class="bi-google bg-danger align-content-center"></i></a>
-
-								</h4>
-
+							<div class="form-group">
+								<label for = "password" class="mb-0">Mật Khẩu</label>
+								<input type="password" class="form-control" id="password" name="password" value="<%=password%>" placeholder="" >
 							</div>
 
+							<!-- 2 column grid layout for inline styling -->
+							<div class="row mb-4">
+								<div class="col d-flex justify-content-center">
+									<!-- Checkbox -->
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox"  id="remember" name="remember" value="ON"
+										>
+										<label class="form-check-label text-left" for="remember">
+											Lưu mật khẩu
+										</label>
+									</div>
+								</div>
 
+								<div class="col">
+									<!-- Simple link -->
+									<a href="forgotPassword.jsp">Quên Mật Khẩu ?</a>
+								</div>
+							</div>
 
+							<!-- Submit button -->
+							<button type="submit" class="btn btn-success btn-block mb-4">Đăng nhập</button>
+
+							<!-- Register buttons -->
+							<div class="text-center">
+								<p>Chưa có tài khoản ?<a href="registration.jsp">Đăng Ký Ngay</a></p>
+								<p>Hoặc đăng nhập với:</p>
+								<button  type="button" class="btn btn-link btn-floating mx-1">
+									<a href="https://www.facebook.com/dialog/oauth?client_id=390038746860422&redirect_uri=http://localhost:8080/cuoiki_war_exploded/login_facebook"><i class="fab fa-facebook-f text-primary"></i></a>
+								</button>
+
+								<button  type="button" class="btn btn-link btn-floating mx-1">
+									<a href="https://accounts.google.com/o/oauth2/auth?scope=profile email&redirect_uri=http://localhost:8080/cuoiki_war_exploded/loginGoogle&response_type=code&client_id=257156793950-querl7dnqmaq9cjfa1ou89sslsa6cof0.apps.googleusercontent.com&approval_prompt=force"><i class="fab fa-google text-primary"></i></a>
+								</button>
+
+								<button type="button" class="btn btn-link btn-floating mx-1">
+									<i class="fab fa-twitter"></i>
+								</button>
+
+								<button type="button" class="btn btn-link btn-floating mx-1">
+									<i class="fab fa-github"></i>
+								</button>
+							</div>
 						</form>
 					</div>
 				</div>

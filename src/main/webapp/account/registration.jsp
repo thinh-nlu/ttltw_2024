@@ -198,6 +198,10 @@
 										<label for="contact" class="mb-0">Số Điện Thoại</label>
 										<input type="text" class="form-control" id="contact" name="contact" placeholder="">
 									</div>
+									<div class="form-group col-md-6">
+										<label for="contact" class="mb-0">Địa Chỉ</label>
+										<input type="text" class="form-control" id="address" name="address" placeholder="">
+									</div>
 								</div>
 								<div class="mb-5">
 									<button type="submit" class="btn hvr-hover">Đăng Ký</button>
