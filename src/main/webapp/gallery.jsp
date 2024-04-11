@@ -7,6 +7,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
+<%@ page import="java.text.DecimalFormat" %>
 
 <style>
     .btn-filter {
@@ -268,7 +269,7 @@
                         </div>
                         <div class="why-text">
                             <h4><%=p1.getTitle()+" - "+p1.getUnitPrice()+p1.getUnit()%></h4>
-                            <h5><%=p1.getPrice()%></h5>
+                            <h5><%=p1.getPrice()+ "đ"%> </h5>
                         </div>
                     </div>
                 </div>
@@ -296,7 +297,13 @@
                         </div>
                         <div class="why-text">
                             <h4><%=p.getTitle()+" - "+p.getUnitPrice()+p.getUnit()%></h4>
-                            <h5><%=p.getPrice()%></h5>
+                            <%
+                                String price = p.getPrice();
+                                DecimalFormat formatter = new DecimalFormat("#,###");
+                                String formattedPrice = formatter.format(Double.parseDouble(price.split("\\.")[0]));
+                            %>
+
+                            <h5><%= formattedPrice %>đ</h5>
                         </div>
                     </div>
                 </div>
