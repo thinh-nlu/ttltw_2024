@@ -26,7 +26,7 @@ public class UserDAO {
 
     public boolean registerUser(User user) {
         boolean isAdd = false;
-        query = "insert into users(username,email,password,contact,isAdmin,date,isActive) values (?,?,?,?,?,NOW(),?)";
+        query = "insert into users(username,email,password,contact,isAdmin,date,isActive,address,ip) values (?,?,?,?,?,NOW(),?,?,?)";
         try {
             ps = con.prepareStatement(query);
             ps.setString(1,user.getName());
@@ -35,6 +35,8 @@ public class UserDAO {
             ps.setString(4,user.getContact());
             ps.setString(5,user.getIsAdmin());
             ps.setString(6, user.getIsActive());
+            ps.setString(7, user.getAddress());
+            ps.setString(8, user.getIp());
             int i = ps.executeUpdate();
             isAdd = i == 1;
         } catch (SQLException e) {
@@ -46,7 +48,7 @@ public class UserDAO {
 
     public User getUserByUsername(String username) {
         User user=null;
-        query = "SELECT id, username, email, password, contact, isAdmin, date, isActive FROM users WHERE username = ?";
+        query = "SELECT id, username, email, password, contact, isAdmin, date, isActive, address, ip FROM users WHERE username = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setString(1, username);
@@ -61,6 +63,8 @@ public class UserDAO {
                 user.setIsAdmin(rs.getString(6));
                 user.setTimestamp(rs.getTimestamp(7));
                 user.setIsActive(rs.getString(8));
+                user.setAddress(rs.getString(9));
+                user.setIp(rs.getString(10));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -71,7 +75,7 @@ public class UserDAO {
 
     public User getUserById(int id) {
         User user=null;
-        query = "SELECT id, username, email, password, contact, isAdmin, date, isActive FROM users WHERE id = ?";
+        query = "SELECT id, username, email, password, contact, isAdmin, date, isActive, address, ip FROM users WHERE id = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setInt(1, id);
@@ -86,6 +90,8 @@ public class UserDAO {
                 user.setIsAdmin(rs.getString(6));
                 user.setTimestamp(rs.getTimestamp(7));
                 user.setIsActive(rs.getString(8));
+                user.setAddress(rs.getString(9));
+                user.setIp(rs.getString(10));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -96,7 +102,7 @@ public class UserDAO {
 
     public List<User> getAllUser() {
         List<User> users = new ArrayList<>();
-        query = "SELECT id, username, email, password, contact, isAdmin, date, isActive FROM users";
+        query = "SELECT id, username, email, password, contact, isAdmin, date, isActive, address, ip FROM users";
         User u = null;
         try {
             ps = con.prepareStatement(query);
@@ -111,6 +117,8 @@ public class UserDAO {
                 u.setIsAdmin(rs.getString(6));
                 u.setTimestamp(rs.getTimestamp(7));
                 u.setIsActive(rs.getString(8));
+                u.setAddress(rs.getString(9));
+                u.setIp(rs.getString(10));
                 users.add(u);
             }
         } catch (SQLException e) {
@@ -120,7 +128,7 @@ public class UserDAO {
     }
     public List<User> getRecords(int start, int total) {
         List<User> users = new ArrayList<>();
-        query = "SELECT id, username, email, password, contact, isAdmin, date, isActive FROM users LIMIT ?, ?";
+        query = "SELECT id, username, email, password, contact, isAdmin, date, isActive, address, ip FROM users LIMIT ?, ?";
         User u = null;
         try {
             ps = con.prepareStatement(query);
@@ -137,6 +145,8 @@ public class UserDAO {
                 u.setIsAdmin(rs.getString(6));
                 u.setTimestamp(rs.getTimestamp(7));
                 u.setIsActive(rs.getString(8));
+                u.setAddress(rs.getString(9));
+                u.setIp(rs.getString(10));
                 users.add(u);
             }
         } catch (SQLException e) {

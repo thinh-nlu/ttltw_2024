@@ -12,13 +12,11 @@ public class User {
     private Timestamp timestamp;
     private String isActive;
 
-    public String getIsActive() {
-        return isActive;
-    }
+    private String address;
 
-    public void setIsActive(String isActive) {
-        this.isActive = isActive;
-    }
+    private String ip;
+
+
 
     public User(){}
 
@@ -29,6 +27,17 @@ public class User {
         this.contact = contact;
         this.isAdmin = isAdmin;
         this.isActive = isActive;
+    }
+
+    public User(String name, String email, String password, String contact, String isAdmin, String isActive, String address, String ip) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.contact = contact;
+        this.isAdmin = isAdmin;
+        this.isActive = isActive;
+        this.address = address;
+        this.ip = ip;
     }
 
     public int getId() {
@@ -86,6 +95,19 @@ public class User {
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
+
+    public String getAddress() {return address;}
+
+    public void setAddress(String address) {this.address = address;}
+    public String getIsActive() {return isActive;}
+
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getIp() {return ip;}
+
+    public void setIp(String ip) {this.ip = ip;}
 
     @Override
     public String toString() {

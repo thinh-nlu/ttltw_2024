@@ -198,7 +198,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <h1 class="m-b-20"><strong>Chào Mừng Đến Với<br> Nông Lâm Xanh</strong></h1>
+                            <h1 style="font-family: 'Courier New',serif" class="m-b-10 "><strong>Chào Mừng Đến Với<br> Nông Lâm Xanh</strong></h1>
                             <p class="m-b-40">Trải nghiệm đi chợ tại nhà.</p>
                             <p><a class="btn hvr-hover" href="gallery.jsp">Mua Ngay</a></p>
                         </div>
@@ -210,7 +210,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <h1 class="m-b-20"><strong>Chào Mừng Đến Với<br>  Nông Lâm Xanh</strong></h1>
+                            <h1 style="font-family: 'Courier New',serif" class="m-b-10 "><strong>Chào Mừng Đến Với<br> Nông Lâm Xanh</strong></h1>
                             <p class="m-b-40">Trải nghiệm đi chợ tại nhà.</p>
                             <p><a class="btn hvr-hover" href="gallery.jsp">Mua Ngay</a></p>
                         </div>
@@ -222,7 +222,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <h1 class="m-b-20"><strong>Chào Mừng Đến Với<br>  Nông Lâm Xanh</strong></h1>
+                            <h1 style="font-family: 'Courier New',serif" class="m-b-10 "><strong>Chào Mừng Đến Với<br> Nông Lâm Xanh</strong></h1>
                             <p class="m-b-40">Trải nghiệm đi chợ tại nhà.</p>
                             <p><a class="btn hvr-hover" href="gallery.jsp">Mua Ngay</a></p>
                         </div>

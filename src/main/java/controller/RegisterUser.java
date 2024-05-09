@@ -37,9 +37,10 @@ public class RegisterUser extends HttpServlet {
         String password = req.getParameter("password").trim();
         String rePass = req.getParameter("re_pass").trim();
         String contact = req.getParameter("contact").trim();
+        String address = req.getParameter("address").trim();
         String hashPassword = hashPassword(password);
 
-        User user = new User(username,email,hashPassword,contact,"1","1");
+        User user = new User(username,email,hashPassword,contact,"1","1",address,"27.2.16.228");
         HttpSession session = req.getSession();
         UserDAO dao = new UserDAO(DBConnect.getConnection());
         List<User> users = dao.getAllUser();
@@ -62,13 +63,12 @@ public class RegisterUser extends HttpServlet {
                 session.setAttribute("failedRegister","Số điện thoại không tồn tại");
                 resp.sendRedirect("account/registration.jsp");
             } else {
-                // Sending OTP
+                //Gửi OTP
                 Random rand = new Random();
                 otpvalue = rand.nextInt(1255650);
 
                 String to = email;
 
-                // Get the session object
                 Properties props = new Properties();
                 props.put("mail.smtp.host", "smtp.gmail.com");
                 props.put("mail.smtp.socketFactory.port", "465");
@@ -88,7 +88,7 @@ public class RegisterUser extends HttpServlet {
                     message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
                     message.setSubject("Hello");
                     message.setText("Your OTP is: " + otpvalue);
-                    // Send message
+
                     Transport.send(message);
 
                 } catch (MessagingException e) {
@@ -120,7 +120,7 @@ public class RegisterUser extends HttpServlet {
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-            // Xử lý ngoại lệ nếu cần thiết
+
         }
         return null;
     }
@@ -128,4 +128,6 @@ public class RegisterUser extends HttpServlet {
     public boolean validatePhoneNumber(String contact) {
         return contact.matches("\\d{10}");
     }
+
+
 }

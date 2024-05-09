@@ -7,6 +7,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
+<%@ page import="java.text.DecimalFormat" %>
 
 <style>
     .btn-filter {
@@ -180,32 +181,7 @@
                 <!-- End Atribute Navigation -->
             </div>
             <!-- Start Side Menu -->
-            <div class="side">
-                <a href="#" class="close-side"><i class="fa fa-times"></i></a>
-                <li class="cart-box">
-                    <ul class="cart-list">
-                        <li>
-                            <a href="#" class="photo"><img src="images/img-pro-01.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Delica omtantur </a></h6>
-                            <p>1x - <span class="price">$80.00</span></p>
-                        </li>
-                        <li>
-                            <a href="#" class="photo"><img src="images/img-pro-02.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Omnes ocurreret</a></h6>
-                            <p>1x - <span class="price">$60.00</span></p>
-                        </li>
-                        <li>
-                            <a href="#" class="photo"><img src="images/img-pro-03.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Agam facilisis</a></h6>
-                            <p>1x - <span class="price">$40.00</span></p>
-                        </li>
-                        <li class="total">
-                            <a href="#" class="btn btn-default hvr-hover btn-cart">VIEW CART</a>
-                            <span class="float-right"><strong>Total</strong>: $180.00</span>
-                        </li>
-                    </ul>
-                </li>
-            </div>
+
             <!-- End Side Menu -->
         </nav>
         <!-- End Navigation -->
@@ -293,7 +269,7 @@
                         </div>
                         <div class="why-text">
                             <h4><%=p1.getTitle()+" - "+p1.getUnitPrice()+p1.getUnit()%></h4>
-                            <h5><%=p1.getPrice()%></h5>
+                            <h5><%=p1.getPrice()+ "đ"%> </h5>
                         </div>
                     </div>
                 </div>
@@ -321,7 +297,13 @@
                         </div>
                         <div class="why-text">
                             <h4><%=p.getTitle()+" - "+p.getUnitPrice()+p.getUnit()%></h4>
-                            <h5><%=p.getPrice()%></h5>
+                            <%
+                                String price = p.getPrice();
+                                DecimalFormat formatter = new DecimalFormat("#,###");
+                                String formattedPrice = formatter.format(Double.parseDouble(price.split("\\.")[0]));
+                            %>
+
+                            <h5><%= formattedPrice %>đ</h5>
                         </div>
                     </div>
                 </div>

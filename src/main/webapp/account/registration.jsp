@@ -187,16 +187,36 @@
 										<input type="email" class="form-control" id="email" name="email" placeholder="">
 									</div>
 									<div class="form-group col-md-6">
-										<label for = "password" class="mb-0">Mật Khẩu</label>
-										<input type="password" class="form-control" id="password" name="password" placeholder="">
+										<label for = "password" class="mb-0">Nhập mật khẩu</label>
+										<div class="input-group">
+											<input type="password" class="form-control" id="password" name="password" placeholder="">
+											<div class="input-group-append">
+												<button class="btn btn-outline-secondary" type="button" id="togglePassword">
+													<i class="bi bi-eye"></i>
+												</button>
+											</div>
+										</div>
 									</div>
+
 									<div class="form-group col-md-6">
-										<label for="re_pass" class="mb-0">Nhập Lại Mật Khẩu</label>
-										<input type="password" class="form-control" id="re_pass" name="re_pass" placeholder="">
+										<label for="re_pass" class="mb-0">Nhập lại mật khẩu</label>
+										<div class="input-group">
+											<input type="password" class="form-control" id="re_pass" name="re_pass" placeholder="">
+											<div class="input-group-append">
+												<button class="btn btn-outline-secondary" type="button" id="toggleRePassword">
+													<i class="bi bi-eye"></i>
+												</button>
+											</div>
+										</div>
 									</div>
+
 									<div class="form-group col-md-6">
 										<label for="contact" class="mb-0">Số Điện Thoại</label>
 										<input type="text" class="form-control" id="contact" name="contact" placeholder="">
+									</div>
+									<div class="form-group col-md-6">
+										<label for="contact" class="mb-0">Địa Chỉ</label>
+										<input type="text" class="form-control" id="address" name="address" placeholder="">
 									</div>
 								</div>
 								<div class="mb-5">
@@ -210,6 +230,51 @@
 		</div>
 	</section>
 </div>
+<script>
+	document.getElementById("formRegister").addEventListener("submit", function(event) {
+		var password = document.getElementById("password").value;
+		var rePassword = document.getElementById("re_pass").value;
+
+		// Kiểm tra mật khẩu có chứa ít nhất một chữ hoa, kí tự đặc biệt và số
+		var uppercaseRegex = /[A-Z]/;
+		var specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+		var numberRegex = /[0-9]/;
+
+		if (!uppercaseRegex.test(password) || !specialCharRegex.test(password) || !numberRegex.test(password)) {
+			event.preventDefault(); // Ngăn form submit
+			swal("Lỗi", "Mật khẩu phải chứa ít nhất một chữ hoa, một kí tự đặc biệt và một số.", "error");
+		}
+
+		// Kiểm tra mật khẩu và mật khẩu nhập lại có khớp nhau không
+		if (password !== rePassword) {
+			event.preventDefault(); // Ngăn form submit
+			swal("Lỗi", "Mật khẩu nhập lại không khớp.", "error");
+		}
+	});
+
+	document.getElementById("togglePassword").addEventListener("click", function() {
+		var passwordField = document.getElementById("password");
+		if (passwordField.type === "password") {
+			passwordField.type = "text";
+			this.innerHTML = '<i class="bi bi-eye-slash"></i>';
+		} else {
+			passwordField.type = "password";
+			this.innerHTML = '<i class="bi bi-eye"></i>';
+		}
+	});
+
+	document.getElementById("toggleRePassword").addEventListener("click", function() {
+		var rePasswordField = document.getElementById("re_pass");
+		if (rePasswordField.type === "password") {
+			rePasswordField.type = "text";
+			this.innerHTML = '<i class="bi bi-eye-slash"></i>';
+		} else {
+			rePasswordField.type = "password";
+			this.innerHTML = '<i class="bi bi-eye"></i>';
+		}
+	});
+
+</script>
 
 <!-- JS -->
 <script src="vendor/jquery/jquery.min.js"></script>
