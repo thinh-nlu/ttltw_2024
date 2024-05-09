@@ -61,10 +61,10 @@
                 <div class="login-register">
                     <ul>
                         <% if (user != null) { %>
-                        <% if (!user.getIsAdmin().equals("0")) { %>
+                        <% if (!user.getIsAdmin().equals("0")&&!user.getIsAdmin().equals("3")) { %>
                         <li><a href="../tien_ich/my-account.jsp">Xin chào <%=user.getName()%></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a></li>
-                        <%} else {%>
+                        <%}else{%>
                         <li><p>Xin chào <%= user.getName() %></p></li>
                         <li><a href="../admin/admin.jsp">Trang Quản Lí</a></li>
                         <li><a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a></li>
