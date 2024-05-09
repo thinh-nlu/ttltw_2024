@@ -1,7 +1,6 @@
 package dao;
 
 import database.DBConnect;
-import model.Product;
 import model.User;
 
 import java.nio.charset.StandardCharsets;
@@ -220,6 +219,19 @@ public class UserDAO {
         return isUpdate;
     }
 
+    public void updateRole(String newrole, int id) {
+        query = "UPDATE users SET isAdmin = ? WHERE id = ?";
+        try {
+            ps = con.prepareStatement(query);
+            ps.setString(1,newrole);
+            ps.setInt(2,id);
+            int i = ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 
 
     private String hashPassword(String password) {
@@ -295,6 +307,7 @@ public class UserDAO {
 
         return isNull;
     }
+
     public boolean isUsernameExist(String username) {
         boolean exists = false;
         query = "select count(*) from users where username = ?";

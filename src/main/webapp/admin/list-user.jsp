@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="dao.UserDAO" %>
 <%@ page import="database.DBConnect" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
@@ -190,10 +191,16 @@
       </thead>
       <tbody class="bg-light text-dark">
       <%
-        if(!users.isEmpty()) {
-          for (User u: users) {
-            isActive = u.getIsActive();
-            int id = u.getId();
+
+        List<User> employeeList = new ArrayList<>();
+        for (User u : users) {
+          if (u.getIsAdmin().equals("1")||u.getIsAdmin().equals("2")) {
+            employeeList.add(u);
+          }
+        }
+        for (User u : employeeList) {
+          isActive = u.getIsActive();
+          int id = u.getId();
       %>
       <tr class='text-center text-dark font-weight-normal  '>
         <td><%=id%></td>
@@ -222,7 +229,7 @@
 
       </tr>
       <%
-          }
+
         }
       %>
       </tbody>
