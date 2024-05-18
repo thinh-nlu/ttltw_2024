@@ -266,4 +266,81 @@ public class ProductDAO {
         }
         return rowCount;
     }
+
+    public List<Product> getBestSellingProducts(int limit) {
+        List<Product> bestSellingProducts = new ArrayList<>();
+        query = "SELECT id, title, image, price, unit, categoryId, keyword, status, insertDate, quantity, unitPrice, descrip FROM products ORDER BY quantity DESC LIMIT ?";
+        try {
+            ps = con.prepareStatement(query);
+            ps.setInt(1, limit);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt(1));
+                product.setTitle(rs.getString(2));
+                product.setImage(rs.getString(3));
+                product.setPrice(rs.getString(4));
+                product.setUnit(rs.getString(5));
+                product.setCategoryId(rs.getString(6));
+                product.setKeyword(rs.getString(7));
+                product.setStatus(rs.getString(8));
+                product.setDateInsert(rs.getTimestamp(9));
+                product.setQuantity(rs.getString(10));
+                product.setUnitPrice(rs.getString(11));
+                product.setDescription(rs.getString(12));
+                bestSellingProducts.add(product);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return bestSellingProducts;
+    }
+
+    public List<Product> getDiscountedProducts() {
+        List<Product> discountedProducts = new ArrayList<>();
+        query = "SELECT id, title, image, price, unit, categoryId, keyword, status, insertDate, quantity, unitPrice, descrip FROM products WHERE status = 'discount'";
+        try {
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt(1));
+                product.setTitle(rs.getString(2));
+                product.setImage(rs.getString(3));
+                product.setPrice(rs.getString(4));
+                product.setUnit(rs.getString(5));
+                product.setCategoryId(rs.getString(6));
+                product.setKeyword(rs.getString(7));
+                product.setStatus(rs.getString(8));
+                product.setDateInsert(rs.getTimestamp(9));
+                product.setQuantity(rs.getString(10));
+                product.setUnitPrice(rs.getString(11));
+                product.setDescription(rs.getString(12));
+                discountedProducts.add(product);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return discountedProducts;
+    }
+
+    public List<Product> getProductPrices() {
+        List<Product> productsWithPrices = new ArrayList<>();
+        query = "SELECT id, title, price FROM products";
+        try {
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt(1));
+                product.setTitle(rs.getString(2));
+                product.setPrice(rs.getString(3));
+                productsWithPrices.add(product);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return productsWithPrices;
+    }
+
 }

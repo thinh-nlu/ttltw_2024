@@ -1,4 +1,5 @@
     package controller;
+    import com.google.gson.Gson;
     import dao.ProductDAO;
     import database.DBConnect;
     import jakarta.servlet.annotation.WebServlet;
@@ -18,18 +19,28 @@
             HttpSession session = request.getSession();
             // lay san pham
             ProductDAO dao = new ProductDAO(DBConnect.getConnection());
+            List<Product> filterProduct = dao.getProductsByCategory(categoryId);
+
+            String jsonResponse = new Gson().toJson(filterProduct);
+
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(jsonResponse);
+
 
             // phan loai san pham theo categoryId
-            List<Product> filterProduct = null;
-            if (filterProduct == null) {
-                filterProduct = new ArrayList<>();
-                filterProduct.clear();
-            }
+//            List<Product> filterProduct = null;
+//            if (filterProduct == null) {
+//                filterProduct = new ArrayList<>();
+//                filterProduct.clear();
+//            }
 
     //        List<Product> filterProduct = new ArrayList<>();
     //        filterProduct.clear();
-            filterProduct = dao.getProductsByCategory(categoryId);
-            session.setAttribute("searchListSuccess", filterProduct);
-            response.sendRedirect("gallery.jsp");
+//            filterProduct = dao.getProductsByCategory(categoryId);
+//            session.setAttribute("searchListSuccess", filterProduct);
+           response.getWriter().write(jsonResponse);
+//            System.out.println(jsonResponse);
+
         }
     }
