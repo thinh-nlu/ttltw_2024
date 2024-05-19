@@ -421,15 +421,37 @@
                             </div>
                         </div>
                         <div class="why-text">
-                            <h4><%=p.getTitle()+" - "+p.getUnitPrice()+p.getUnit()%></h4>
+                            <h4><%= p.getTitle() + " - " + p.getUnitPrice() + p.getUnit() %></h4>
                             <%
                                 String price = p.getPrice();
                                 DecimalFormat formatter = new DecimalFormat("#,###");
-                                String formattedPrice = formatter.format(Double.parseDouble(price.split("\\.")[0]));
+                                double originalPrice = Double.parseDouble(price.split("\\.")[0]);
+                                String formattedPrice = formatter.format(originalPrice);
+                                int discount = p.getDiscount();
+                                double discountedPrice = originalPrice - (originalPrice * discount / 100.0);
+                                String formattedDiscountedPrice = formatter.format(discountedPrice);
                             %>
-
-                            <h5><%= formattedPrice %>đ</h5>
+                            <div class="flex-row">
+                                <% if (discount != 0) { %>
+                                <s class="h5"><span><%= formattedPrice %>đ</span></s>
+                                <span class="ml-3 bg-danger text-light h6 bg-gradient-danger">-<%= discount %>%</span>
+                                <% } %>
+                            </div>
+                            <h5 class="text-dark">
+                                <% if (discount != 0) { %>
+                                <%= formattedDiscountedPrice %>đ /<%= p.getUnitPrice() %><%= p.getUnit() %>
+                                <% } else { %>
+                                <%= formattedPrice %>đ / <%= p.getUnitPrice() %><%= p.getUnit() %>
+                                <% } %>
+                            </h5>
                         </div>
+
+
+
+
+
+
+
                     </div>
                 </div>
 

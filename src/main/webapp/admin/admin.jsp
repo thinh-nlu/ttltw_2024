@@ -164,9 +164,15 @@
                         </a>
                     </li>
 
+                    <li class="nav-item">
+                        <a href="edit_role.jsp" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Quản lí quyền hạng</p>
+                        </a>
+                    </li>
 
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="list_discount.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
                             <p>Khuyến mãi sản phẩm</p>
                         </a>
