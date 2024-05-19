@@ -213,7 +213,7 @@
 								<div class="col d-flex justify-content-center">
 									<!-- Checkbox -->
 									<div class="form-check">
-										<input class="form-check-input" type="checkbox"  id="remember" name="remember" value="ON"
+										<input class="form-check-input" type="checkbox"  id="remember" name="remember" value="ON" checked
 										>
 										<label class="form-check-label text-left" for="remember">
 											Lưu mật khẩu

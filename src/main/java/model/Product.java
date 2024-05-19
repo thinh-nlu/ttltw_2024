@@ -8,6 +8,8 @@ public class Product {
     private int id;
     private String title;
     private String price;
+
+    private int discount;
     private String unit;
     private String image;
     private String categoryId;
@@ -21,6 +23,20 @@ public class Product {
 
     public Product() {}
 
+    public Product(String title, String price,int discount, String unit, String image, String categoryId, String keyword, String quantity, String status, String unitPrice, String descript) {
+        this.title = title;
+        this.price = price;
+        this.discount = discount;
+        this.unit = unit;
+        this.image = image;
+        this.categoryId = categoryId;
+        this.keyword = keyword;
+        this.quantity = quantity;
+        this.status = status;
+        this.unitPrice = unitPrice;
+        this.descript = descript;
+
+    }
     public Product(String title, String price, String unit, String image, String categoryId, String keyword, String quantity, String status, String unitPrice, String descript) {
         this.title = title;
         this.price = price;
@@ -35,6 +51,21 @@ public class Product {
 
     }
 
+
+    public Product(int id, String title, String price,int discount, String unit, String image, String categoryId, String keyword, Timestamp timestamp, String quantity, String status, String unitPrice) {
+        this.id = id;
+        this.title = title;
+        this.price = price;
+        this.discount = discount;
+        this.unit = unit;
+        this.image = image;
+        this.categoryId = categoryId;
+        this.keyword = keyword;
+        this.timestamp = timestamp;
+        this.quantity = quantity;
+        this.status = status;
+        this.unitPrice = unitPrice;
+    }
     public Product(int id, String title, String price, String unit, String image, String categoryId, String keyword, Timestamp timestamp, String quantity, String status, String unitPrice) {
         this.id = id;
         this.title = title;
@@ -49,6 +80,21 @@ public class Product {
         this.unitPrice = unitPrice;
     }
 
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
+
+    public String getDescript() {
+        return descript;
+    }
+
+    public void setDescript(String descript) {
+        this.descript = descript;
+    }
 
     public String getDescription() {
         return descript;
