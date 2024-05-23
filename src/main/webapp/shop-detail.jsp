@@ -5,6 +5,7 @@
 <%@page import="dao.FeedbackDAO" %>
 <%@ page import="model.User" %>
 <%@ page import="cart.CartProduct" %>
+<%@ page import="dao.OrderDAO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored="false" %>
 <style>
@@ -28,6 +29,24 @@
 
 <%
     Product p1 = (Product) session.getAttribute("productDetail");
+%>
+
+<%
+
+    if (user != null) {
+        OrderDAO orderDAO = new OrderDAO(DBConnect.getConnection());
+    }
+
+    String msgFeedback = (String) session.getAttribute("msgFeedback");
+    if (msgFeedback != null) {
+%>
+
+<script>
+    alert("<%= msgFeedback %>");
+</script>
+<%
+        session.removeAttribute("msgFeedback");
+    }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -284,8 +303,6 @@
                 <div class="media mb-3">
                     <div class="mr-2">
                         <img src="images/profile.jpg" class="profile-image">
-                        <h4 class="text-center"><%= feedback.getName() %>
-                        </h4>
                     </div>
 
                     <div class="media-body">
@@ -316,20 +333,7 @@
         <h2>Đánh giá sản phẩm</h2>
         <form id="form" method="post" action="${pageContext.request.contextPath }/userComment?id=<%=p1.getId()%>">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Họ và Tên" required
-                               data-error="Nhập họ tên của bạn">
 
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <input type="email" placeholder="Email" id="email" class="form-control" name="email" required
-                               data-error="Vui lòng nhập email">
-
-                    </div>
-                </div>
                 <div class="col-md-12">
                     <div class="form-group">
                         <textarea class="form-control" id="message" name="message" placeholder="Phản hồi của bạn"
@@ -344,6 +348,7 @@
                 </div>
             </div>
         </form>
+
 
     </div>
 </div>
