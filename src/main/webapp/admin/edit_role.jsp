@@ -254,7 +254,28 @@
             boundaryNumbers: false
           }
         }
-      }
+      },
+      language: {
+        processing: "Đang tải dữ liệu",
+        search: "Tìm Kiếm",
+        lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
+        info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
+        infoEmpty: "0 bản ghi trong 0 tổng cộng 0 ",
+        infoFiltered: "(Message bổ sung cho info khi không search đc record nào _MAX_)",
+        loadingRecords: "Không có dữ liệu phù hợp",
+        zeroRecords: "",
+        emptyTable: "Không có dữ liệu",
+        paginate: {
+          first: "Trang đầu",
+          previous: "Trang trước",
+          next: "Trang sau",
+          last: "Trang cuối"
+        },
+        aria: {
+          sortAscending: ":Sắp xếp theo hàng",
+          sortDescending: ":Sắp xếp theo cột",
+        }
+      },
     });
   </script>
 

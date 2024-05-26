@@ -18,7 +18,7 @@
         pageid=pageid* totalPerPage +1;
     }
     ProductDAO dao = new ProductDAO(DBConnect.getConnection());
-    List<Product> list = dao.getRecords(pageid, totalPerPage);
+
     List<Product> allList = dao.getAllProduct();
     double totalProducts = allList.size();
     int totalPage = (int) Math.ceil(totalProducts /totalPerPage);
@@ -44,6 +44,9 @@
     <link rel="stylesheet" href="../css/responsive.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/custom.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.0.5/js/dataTables.js"></script>
+    <link href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css" rel="stylesheet">
 
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -180,7 +183,7 @@
 %>
 <div class="px-lg-5 pt-xl-5">
 <div class="px-lg-5 pt-xl-1">
-    <table class="table table-striped text-center ">
+    <table id="datatable" class="table table-striped text-center ">
         <thead class="bg-dark">
         <tr class="text-light">
             <th>ID</th>
@@ -194,7 +197,7 @@
         </thead>
         <tbody class="bg-light text-dark">
         <%
-            for (Product p: list) {
+            for (Product p: allList) {
                 if (p!=null) {
         %>
         <tr class='text-center text-dark font-weight-normal  '>
@@ -214,26 +217,39 @@
 
   </tbody>
     </table>
-    <nav aria-label="...">
-        <ul class="pagination pb-5 justify-content-center">
-            <li class="page-item  <%= (activePage==1)?"disabled":"enable"%>">
-                <a class="page-link" href="list-products.jsp?page=<%= previousPage %>" aria-label="Previous">
-                    <i class="bi-arrow-left"></i>
-                </a>
-            </li>
-            <% for (int i = 1; i <= totalPage; i++) { %>
-            <li class="page-item <%= (i == activePage) ? "active" : "" %>">
-                <a class="page-link" href="list-products.jsp?page=<%= i %>"><%= i %></a>
-            </li>
-            <% } %>
-            <li class="page-item <%= (activePage==totalPage)?"disabled":"enable"%>">
-                <a class="page-link" href="list-products.jsp?page=<%= nextPage %>" aria-label="Next">
-                    <i class="bi-arrow-right"></i>
-                </a>
-            </li>
-        </ul>
+    <script>
+        new DataTable('#datatable', {
+            layout: {
+                bottomEnd: {
+                    paging: {
+                        boundaryNumbers: false
+                    }
+                }
+            },
+            language: {
+                processing: "Đang tải dữ liệu",
+                search: "Tìm Kiếm",
+                lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
+                info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
+                infoEmpty: "0 bản ghi trong 0 tổng cộng 0 ",
+                infoFiltered: "(Message bổ sung cho info khi không search đc record nào _MAX_)",
+                loadingRecords: "Không có dữ liệu phù hợp",
+                zeroRecords: "",
+                emptyTable: "Không có dữ liệu",
+                paginate: {
+                    first: "Trang đầu",
+                    previous: "Trang trước",
+                    next: "Trang sau",
+                    last: "Trang cuối"
+                },
+                aria: {
+                    sortAscending: ":Sắp xếp theo hàng",
+                    sortDescending: ":Sắp xếp theo cột",
+                }
+            },
+        });
+    </script>
 
-    </nav>
 </div>
 </div>
 </body>
