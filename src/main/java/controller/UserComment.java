@@ -38,7 +38,7 @@ public class UserComment extends HttpServlet {
 
         // Kiểm tra xem người dùng đã có đơn hàng hay chưa
         OrderDAO orderDAO = new OrderDAO(DBConnect.getConnection());
-        boolean userHasOrders = orderDAO.userHasOrders(user.getId());
+        boolean userHasOrders = orderDAO.userHasOrders(user.getId(),id);
 
         if (!userHasOrders) {
             req.getSession().setAttribute("msgFeedback", "Bạn cần phải mua hàng trước khi để lại bình luận.");

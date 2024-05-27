@@ -162,20 +162,23 @@ public class OrderDAO {
         return list;
     }
 
-    public boolean userHasOrders(int userId) {
-        boolean hasOrders = false;
-        query = "SELECT COUNT(*) FROM orders WHERE user_id = ?";
+    public boolean userHasOrders(int userId,int productId) {
+        boolean exists = false;
+        query = "SELECT COUNT(*) FROM order_detail od " +
+                "JOIN orders o ON od.order_id = o.id " +
+                "WHERE o.user_id = ? AND od.product_id = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setInt(1, userId);
+            ps.setInt(2, productId);
             rs = ps.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
-                hasOrders = true;
+                exists = true;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return hasOrders;
+        return exists;
     }
 
 
