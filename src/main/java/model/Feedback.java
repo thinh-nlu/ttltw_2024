@@ -5,8 +5,7 @@ import java.util.Date;
 
 public class Feedback {
     private int id;
-    private String name;
-    private String email;
+
     private String message;
     private Timestamp created;
     private int productID;
@@ -15,11 +14,9 @@ public class Feedback {
         super();
     }
 
-    public Feedback(int id, String name, String email,String message, Timestamp created, int productID) {
+    public Feedback(int id, String message, Timestamp created, int productID) {
         super();
         this.id = id;
-        this.name = name;
-        this.email = email;
         this.message = message;
         this.created = created;
         this.productID = productID;
@@ -47,18 +44,7 @@ public class Feedback {
     public void setId(int id) {
         this.id = id;
     }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
+
     public int getProductID() {
         return productID;
     }
@@ -68,7 +54,7 @@ public class Feedback {
 
     @Override
     public String toString() {
-        return "Feedback [id=" + id + ", name=" + name + ", email=" + email + ", message=" + message + ", created="
+        return "Feedback [id=" + id + ", message=" + message + ", created="
                 + created + ", productID=" + productID + "]";
     }
 

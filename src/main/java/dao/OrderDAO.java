@@ -162,5 +162,21 @@ public class OrderDAO {
         return list;
     }
 
+    public boolean userHasOrders(int userId) {
+        boolean hasOrders = false;
+        query = "SELECT COUNT(*) FROM orders WHERE user_id = ?";
+        try {
+            ps = con.prepareStatement(query);
+            ps.setInt(1, userId);
+            rs = ps.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                hasOrders = true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return hasOrders;
+    }
+
 
 }
