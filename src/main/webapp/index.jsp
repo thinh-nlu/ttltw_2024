@@ -106,12 +106,12 @@
                 <div class="collapse navbar-collapse" id="navbar-menu">
                     <ul class="nav navbar-nav ml-auto" data-in="fadeInDown" data-out="fadeOutUp">
                         <li class="nav-item active"><a class="nav-link" href="index.jsp">Trang Chủ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="about.jsp">Giới Thiệu</a></li>
+                         <li class="nav-item"><a class="nav-link" href="about.jsp">Giới Thiệu</a></li>
                         <li class="dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tiện ích <i class="bi bi-list "></i></a>
                             <ul class="dropdown-menu">
                                 <li><a href="tien_ich/cart.jsp">Giỏ Hàng</a></li>
-                                <li><a href="tien_ich/address.jsp">Địa chỉ</a></li>
+                                <li><a href="tien_ich/List-address.jsp">Địa chỉ</a></li>
                                 <li><a href="tien_ich/checkout.jsp">Thanh Toán</a></li>
                                 <li><a href="tien_ich/my-account.jsp">Tài Khoản</a></li>
                                 <li><a href="tien_ich/wishlist.jsp">Yêu Thích</a></li>

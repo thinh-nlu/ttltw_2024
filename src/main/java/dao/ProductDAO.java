@@ -145,7 +145,7 @@ public class ProductDAO {
 
     public Product getProductById(int id) {
         Product product = null;
-        query = "SELECT id, title, image,discount ,price, unit, categoryId, keyword, status, insertDate, quantity, unitPrice, descrip FROM products WHERE id = ?";
+        query = "SELECT id, title, image,price, discount , unit, categoryId, keyword, status, insertDate, quantity, unitPrice, descrip FROM products WHERE id = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setInt(1, id);
