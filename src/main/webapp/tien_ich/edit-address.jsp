@@ -1,17 +1,19 @@
 <%@ page import="model.User" %>
 <%@ page import="cart.CartProduct" %>
-<%@ page import="cart.Cart" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="model.Product" %>
+<%@ page import="model.Address" %>
+<%@ page import="dao.AddressDAO" %>
+<%@ page import="database.DBConnect" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
-    User user = (User) session.getAttribute("success");
     CartProduct cartProduct = (CartProduct) session.getAttribute("cart");
     if(cartProduct == null) cartProduct = new CartProduct();
+    User user = (User) session.getAttribute("success");
+    Address a = null;
+    AddressDAO dao = new AddressDAO(DBConnect.getConnection());
+    String saveAddressTest = (String) session.getAttribute("saveAddressText");
 %>
 <!DOCTYPE html>
-
 <html lang="en">
 <!-- Basic -->
 
@@ -45,20 +47,29 @@
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9/sweetalert2.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9/sweetalert2.min.js"></script>
+
     <![endif]-->
-    <style>
-        .profile-image {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-    </style>
+
 </head>
 
 <body>
+<div id="container_header"></div>
 <!-- Start Main Top -->
 <div class="main-top">
+    <% if (user == null) {
+    %>
+    <script>
+        alert("Bạn cần đăng nhập để sử dụng chức năng này.");
+        window.location.href = "../index.jsp";
+    </script>
+    <%}else{
+        String idAddressStr = request.getParameter("id");
+        int idAddress = Integer.parseInt(idAddressStr);
+        a = dao.getAddressById(idAddress);
+       }
+    %>
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -95,6 +106,17 @@
 
     <!-- Start Main Top -->
     <header class="main-header">
+        <%
+            if(saveAddressTest != null) {
+        %>
+        <script>
+            alert("<%=saveAddressTest%>")
+        </script>
+
+        <%
+            }
+            session.removeAttribute("saveAddressTest");
+        %>
         <!-- Start Navigation -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-default bootsnav">
             <div class="container">
@@ -110,13 +132,13 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="navbar-menu">
                     <ul class="nav navbar-nav ml-auto" data-in="fadeInDown" data-out="fadeOutUp">
-                        <li class="nav-item"><a class="nav-link" href="../index.jsp">Trang chủ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../about.jsp">Giới thiệu</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../index.jsp">Trang Chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../about.jsp">Giới Thiệu</a></li>
                         <li class="dropdown active">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tiện ích <i class="bi bi-list "></i></a>
                             <ul class="dropdown-menu">
                                 <li><a href="cart.jsp">Giỏ Hàng</a></li>
-                                <li><a href="edit-address.jsp">Địa chỉ</a></li>
+                                <li><a href="List-address.jsp">Địa chỉ</a></li>
                                 <li><a href="checkout.jsp">Thanh toán</a></li>
                                 <li><a href="my-account.jsp">Tài Khoản</a></li>
                                 <li><a href="wishlist.jsp">Yêu thích</a></li>
@@ -140,43 +162,16 @@
                 <!-- Start Atribute Navigation -->
                 <div class="attr-nav">
                     <ul>
-                        <li class="side-menu"><a href="../tien_ich/cart.jsp">
+                        <li class="side-menu"><a href="cart.jsp">
 						<i class="fa fa-shopping-bag"></i>
-                            <span class="badge"><%= cartProduct.getTotal()%></span>
+                            <span class="badge"><%=cartProduct.getTotal()%></span>
 							<p>Giỏ Hàng</p>
 					</a></li>
                     </ul>
                 </div>
                 <!-- End Atribute Navigation -->
             </div>
-            <!-- Start Side Menu -->
-            <div class="side">
-                <a href="#" class="close-side"><i class="fa fa-times"></i></a>
-                <li class="cart-box">
-                    <ul class="cart-list">
-                        <li>
-                            <a href="#" class="photo"><img src="../images/img-pro-01.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Delica omtantur </a></h6>
-                            <p>1x - <span class="price">$80.00</span></p>
-                        </li>
-                        <li>
-                            <a href="#" class="photo"><img src="../images/img-pro-02.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Omnes ocurreret</a></h6>
-                            <p>1x - <span class="price">$60.00</span></p>
-                        </li>
-                        <li>
-                            <a href="#" class="photo"><img src="../images/img-pro-03.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Agam facilisis</a></h6>
-                            <p>1x - <span class="price">$40.00</span></p>
-                        </li>
-                        <li class="total">
-                            <a href="#" class="btn btn-default hvr-hover btn-cart">VIEW CART</a>
-                            <span class="float-right"><strong>Total</strong>: $180.00</span>
-                        </li>
-                    </ul>
-                </li>
-            </div>
-            <!-- End Side Menu -->
+
         </nav>
         <!-- End Navigation -->
     </header>
@@ -199,10 +194,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <h2>Giỏ Hàng</h2>
+                    <h2>Địa chỉ</h2>
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-                        <li class="breadcrumb-item active">Giỏ Hàng</li>
+                        <li class="breadcrumb-item"><a href="../gallery.jsp">Cửa Hàng</a></li>
+                        <li class="breadcrumb-item active">Thanh Toán</li>
                     </ul>
                 </div>
             </div>
@@ -212,117 +207,61 @@
     <!-- Start Cart  -->
     <div class="cart-box-main">
         <div class="container">
-            <%
-                if(cartProduct.getData().isEmpty()) {
-            %>
-            <h2 class="text-center text-danger">Chưa có sản phẩm nào trong giỏ hàng</h2>
-            <%}else{%>
             <div class="row">
-                <div class="col-lg-12">
-                    <div class="table-main table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Hình ảnh</th>
-                                <th>Tên sản phẩm</th>
-                                <th>Giá</th>
-                                <th>Số lượng</th>
-                                <th>Tổng giá</th>
-                                <th>Cập nhật</th>
-                                <th>Loại bỏ</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <%
-                                for (Map.Entry<Integer, Cart> entry: cartProduct.getData().entrySet()) {
-                                    Product product = entry.getValue().getProduct();
-                                    int quantity = entry.getValue().getQuantity();
-                                    double totalPrice = Double.parseDouble(product.getPrice()) * (double) quantity;
-                            %>
-                            <tr>
-                                <form method="post" action="../update_quantity">
-                                <input type="hidden" name="id" value="<%=product.getId()%>"/>
-                                <td class="thumbnail-img">
-                                    <img class="profile-image" src="../DataWeb/<%=product.getImage()%>" alt="Image" />
-                                </td>
-                                <td class="name-pr">
-                                    <%=product.getTitle()%>
-                                </td>
-                                <td class="price-pr">
-                                    <p><%=product.getPrice()%></p>
-                                </td>
-                                <td class="quantity-box"><input type="number" id="quantity" name="quantity" size="4" value="<%=entry.getValue().getQuantity()%>" min="0" step="1" class="c-input-text qty text"></td>
-                                <td class="total-pr">
-                                    <p><%=totalPrice%></p>
-                                </td>
-                                <td class="remove-pr">
-                                    <button type="submit" class="border-0">
-                                        <i class="bi bi-file-arrow-up-fill"></i>
-                                    </button>
-                                </td>
-                                <td class="remove-pr">
-                                    <a href="../deleteCartProduct?id=<%=product.getId()%>">
-                                        <i class="bi bi-file-arrow-up-fill"></i>
-                                    </a>
-                                </td>
-                                </form>
-                            </tr>
-                            <%}%>
-                            </tbody>
-                        </table>
+                <div class="col-sm-6 col-lg-6 mb-3 mx-auto">
+                    <div class="checkout-address">
+                        <div class="title-left">
+                            <h3>Địa chỉ giao hàng</h3>
+                        </div>
+                        <form class="needs-validation" novalidate action="../updateAddress" method="post">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName">Họ *</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="" value="<%=a==null ? "" :a.getFirstName()%>" required="required">
+                                    <div class="invalid-feedback">Vui lòng nhập họ</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName">Tên *</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="" value="<%=a==null ? "" :a.getLastName()%>" required="required">
+                                    <div class="invalid-feedback">Vui lòng nhập tên</div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="" value="<%=a==null ? "" :a.getEmail()%>" required="required">
+                                <div class="invalid-feedback">Vui lòng nhập địa chỉ email</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contact">Số điện thoại *</label>
+                                <input type="number" class="form-control" id="contact" name="contact" placeholder="" value="<%=a==null ? "" :a.getContact()%>" required="required">
+                                <div class="invalid-feedback">Vui lòng nhập số điện thoại</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address">Đỉa chỉ *</label>
+                                <input type="text" class="form-control" id="address" name="address" value="<%=a==null ? "" :a.getAddress()%>" placeholder="" required="required">
+                                <div class="invalid-feedback">Vui lòng nhập địa chỉ của bạn</div>
+                            </div>
+                            <hr class="mb-4">
+                            <hr class="mb-4">
+                            <div class="title"> <span>Phương thức thanh toán</span> </div>
+                            <div class="d-block my-3">
+                                <div class="custom-control custom-radio">
+                                    <input name="paymentMethod" type="radio" id="credit" class="custom-control-input" value="credit" checked required>
+                                    <label class="custom-control-label" for="credit">Credit card</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input name="paymentMethod" type="radio" id="paypal" class="custom-control-input" value="paypal" required>
+                                    <label class="custom-control-label" for="paypal">Paypal</label>
+                                </div>
+                            </div>
+                            <input type="submit" class="btn hvr-hover" value="Xác nhận">
+                            <hr class="mb-1"> </form>
                     </div>
                 </div>
-            </div>
-            <div class="row my-5">
-                <div class="col-lg-8 col-sm-12"></div>
-                <div class="col-lg-4 col-sm-12">
-                    <div class="order-box">
-                        <%
-                            double totalPrice = cartProduct.totalPriceAllProduct();
-                            double percent = 5.0;
-                            double tax = (totalPrice / 100) * percent;
-                        %>
-                        <div class="d-flex">
-                            <h4>Tổng giá tiền</h4>
-                            <div class="ml-auto font-weight-bold"> <%=totalPrice + "đ"%> </div>
-                        </div>
-                        <hr class="my-1">
-                        <div class="d-flex">
-                            <h4>Thuế</h4>
-                            <div class="ml-auto font-weight-bold"> <%= tax+"đ"%> </div>
-                        </div>
-                        <div class="d-flex">
-                            <h4>Phí giao hàng</h4>
-                            <div class="ml-auto font-weight-bold"> Miễn Phí </div>
-                        </div>
-                        <hr>
-                        <div class="d-flex gr-total">
-                            <h5>Thành tiền</h5>
-                            <div class="ml-auto h5"> <%=totalPrice + tax  + "đ"%> </div>
-                        </div>
-                        <hr> </div>
-                </div>
-                <%
-                    if(user != null) {
-                %>
-                <div class="col-12 d-flex shopping-box"><a href="edit-address.jsp" class="ml-auto btn hvr-hover">Thanh Toán</a> </div>
-                <%
-                    } else {
-                %>
-                <div class="col-12 d-flex shopping-box"><a href="../account/login.jsp" onclick="showAlert()" class="ml-auto btn hvr-hover">Thanh Toán</a> </div>
-                <script>
-                    function showAlert() {
-                        alert("Bạn cần đăng nhập trước khi thanh toán!");
-                    }
-                </script>
-                <%}
-                }
-                %>
             </div>
         </div>
     </div>
     <!-- End Cart -->
-
     <!-- Start Instagram Feed  -->
     <div class="instagram-box">
         <div class="main-instagram owl-carousel owl-theme">
@@ -409,6 +348,7 @@
         </div>
     </div>
     <!-- End Instagram Feed  -->
+
 
 
     <!-- Start Footer  -->

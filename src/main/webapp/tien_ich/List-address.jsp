@@ -1,17 +1,23 @@
 <%@ page import="model.User" %>
 <%@ page import="cart.CartProduct" %>
-<%@ page import="cart.Cart" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="model.Product" %>
+<%@ page import="model.Address" %>
+<%@ page import="dao.AddressDAO" %>
+<%@ page import="database.DBConnect" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
-    User user = (User) session.getAttribute("success");
     CartProduct cartProduct = (CartProduct) session.getAttribute("cart");
     if(cartProduct == null) cartProduct = new CartProduct();
+    User user = (User) session.getAttribute("success");
+    Address a = null;
+    AddressDAO dao = new AddressDAO(DBConnect.getConnection());
+    String saveAddressTest = (String) session.getAttribute("saveAddressText");
+    List<Address> addressList = new ArrayList<>();
+    addressList = dao.getAddressesByUserId(user.getId());
 %>
 <!DOCTYPE html>
-
 <html lang="en">
 <!-- Basic -->
 
@@ -46,19 +52,23 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <style>
-        .profile-image {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-    </style>
+
 </head>
 
 <body>
+<div id="container_header"></div>
 <!-- Start Main Top -->
 <div class="main-top">
+    <% if (user == null) {
+    %>
+    <script>
+        alert("Bạn cần đăng nhập để sử dụng chức năng này.");
+        window.location.href = "../index.jsp";
+    </script>
+    <%}else{
+        a = dao.getAddressByUserId(user.getId());
+       }
+    %>
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -95,6 +105,17 @@
 
     <!-- Start Main Top -->
     <header class="main-header">
+        <%
+            if(saveAddressTest != null) {
+        %>
+        <script>
+            alert("<%=saveAddressTest%>")
+        </script>
+
+        <%
+            }
+            session.removeAttribute("saveAddressTest");
+        %>
         <!-- Start Navigation -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-default bootsnav">
             <div class="container">
@@ -110,13 +131,13 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="navbar-menu">
                     <ul class="nav navbar-nav ml-auto" data-in="fadeInDown" data-out="fadeOutUp">
-                        <li class="nav-item"><a class="nav-link" href="../index.jsp">Trang chủ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../about.jsp">Giới thiệu</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../index.jsp">Trang Chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../about.jsp">Giới Thiệu</a></li>
                         <li class="dropdown active">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tiện ích <i class="bi bi-list "></i></a>
                             <ul class="dropdown-menu">
                                 <li><a href="cart.jsp">Giỏ Hàng</a></li>
-                                <li><a href="edit-address.jsp">Địa chỉ</a></li>
+                                <li><a href="List-address.jsp">Địa chỉ</a></li>
                                 <li><a href="checkout.jsp">Thanh toán</a></li>
                                 <li><a href="my-account.jsp">Tài Khoản</a></li>
                                 <li><a href="wishlist.jsp">Yêu thích</a></li>
@@ -125,6 +146,7 @@
                         <li class="nav-item"><a class="nav-link" href="../gallery.jsp">Cửa Hàng</a></li>
                         <li class="nav-item"><a class="nav-link" href="../contact-us.jsp">Liên Hệ</a></li>
                     </ul>
+
                     <li class="nav-item">
                         <form method="post" action="../searchProduct">
                             <div class="input-group rounded">
@@ -140,9 +162,9 @@
                 <!-- Start Atribute Navigation -->
                 <div class="attr-nav">
                     <ul>
-                        <li class="side-menu"><a href="../tien_ich/cart.jsp">
+                        <li class="side-menu"><a href="cart.jsp">
 						<i class="fa fa-shopping-bag"></i>
-                            <span class="badge"><%= cartProduct.getTotal()%></span>
+                            <span class="badge"><%=cartProduct.getTotal()%></span>
 							<p>Giỏ Hàng</p>
 					</a></li>
                     </ul>
@@ -199,10 +221,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <h2>Giỏ Hàng</h2>
+                    <h2>Địa chỉ</h2>
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-                        <li class="breadcrumb-item active">Giỏ Hàng</li>
+                        <li class="breadcrumb-item"><a href="../gallery.jsp">Cửa Hàng</a></li>
+                        <li class="breadcrumb-item active">Thanh Toán</li>
                     </ul>
                 </div>
             </div>
@@ -210,119 +232,102 @@
     </div>
     <!-- End All Title Box -->
     <!-- Start Cart  -->
-    <div class="cart-box-main">
-        <div class="container">
-            <%
-                if(cartProduct.getData().isEmpty()) {
-            %>
-            <h2 class="text-center text-danger">Chưa có sản phẩm nào trong giỏ hàng</h2>
-            <%}else{%>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="table-main table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Hình ảnh</th>
-                                <th>Tên sản phẩm</th>
-                                <th>Giá</th>
-                                <th>Số lượng</th>
-                                <th>Tổng giá</th>
-                                <th>Cập nhật</th>
-                                <th>Loại bỏ</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <%
-                                for (Map.Entry<Integer, Cart> entry: cartProduct.getData().entrySet()) {
-                                    Product product = entry.getValue().getProduct();
-                                    int quantity = entry.getValue().getQuantity();
-                                    double totalPrice = Double.parseDouble(product.getPrice()) * (double) quantity;
-                            %>
-                            <tr>
-                                <form method="post" action="../update_quantity">
-                                <input type="hidden" name="id" value="<%=product.getId()%>"/>
-                                <td class="thumbnail-img">
-                                    <img class="profile-image" src="../DataWeb/<%=product.getImage()%>" alt="Image" />
-                                </td>
-                                <td class="name-pr">
-                                    <%=product.getTitle()%>
-                                </td>
-                                <td class="price-pr">
-                                    <p><%=product.getPrice()%></p>
-                                </td>
-                                <td class="quantity-box"><input type="number" id="quantity" name="quantity" size="4" value="<%=entry.getValue().getQuantity()%>" min="0" step="1" class="c-input-text qty text"></td>
-                                <td class="total-pr">
-                                    <p><%=totalPrice%></p>
-                                </td>
-                                <td class="remove-pr">
-                                    <button type="submit" class="border-0">
-                                        <i class="bi bi-file-arrow-up-fill"></i>
-                                    </button>
-                                </td>
-                                <td class="remove-pr">
-                                    <a href="../deleteCartProduct?id=<%=product.getId()%>">
-                                        <i class="bi bi-file-arrow-up-fill"></i>
-                                    </a>
-                                </td>
-                                </form>
-                            </tr>
-                            <%}%>
-                            </tbody>
-                        </table>
-                    </div>
+<div class="cart-box-main">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-lg-6 mb-3 mx-auto">
+                <div class="checkout-address">
+                    <table class=" table">
+                        <tr>
+                            <th>Họ</th>
+                            <th>Tên</th>
+                            <th>Email</th>
+                            <th>số điện thoại</th>
+                            <th>Địa chỉ</th>
+                            <th>Thanh toán</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        <% for (Address address : addressList) { %>
+                        <tr>
+                            <td><%= address.getFirstName() %></td>
+                            <td><%= address.getLastName() %></td>
+                            <td><%= address.getEmail() %></td>
+                            <td><%= address.getContact() %></td>
+                            <td><%= address.getAddress() %></td>
+                            <td><%= address.getPaymentMethod() %></td>
+                            <td><a href="edit-address.jsp?id=<%= address.getId() %>"><i class="bi bi-pencil-square"></i></a></td>
+                            <td><a href="#" onclick="confirmDelete(<%= address.getId() %>)"><i class="bi bi-trash-fill"></i></a></td>
+                        </tr>
+                        <% } %>
+                        <tr>
+                            <td colspan="7" class="text-center align-middle"><a href="new_address.jsp"><i class="bi bi-plus-circle"></i></a></td>
+                        </tr>
+                    </table>
                 </div>
-            </div>
-            <div class="row my-5">
-                <div class="col-lg-8 col-sm-12"></div>
-                <div class="col-lg-4 col-sm-12">
-                    <div class="order-box">
-                        <%
-                            double totalPrice = cartProduct.totalPriceAllProduct();
-                            double percent = 5.0;
-                            double tax = (totalPrice / 100) * percent;
-                        %>
-                        <div class="d-flex">
-                            <h4>Tổng giá tiền</h4>
-                            <div class="ml-auto font-weight-bold"> <%=totalPrice + "đ"%> </div>
-                        </div>
-                        <hr class="my-1">
-                        <div class="d-flex">
-                            <h4>Thuế</h4>
-                            <div class="ml-auto font-weight-bold"> <%= tax+"đ"%> </div>
-                        </div>
-                        <div class="d-flex">
-                            <h4>Phí giao hàng</h4>
-                            <div class="ml-auto font-weight-bold"> Miễn Phí </div>
-                        </div>
-                        <hr>
-                        <div class="d-flex gr-total">
-                            <h5>Thành tiền</h5>
-                            <div class="ml-auto h5"> <%=totalPrice + tax  + "đ"%> </div>
-                        </div>
-                        <hr> </div>
-                </div>
-                <%
-                    if(user != null) {
-                %>
-                <div class="col-12 d-flex shopping-box"><a href="edit-address.jsp" class="ml-auto btn hvr-hover">Thanh Toán</a> </div>
-                <%
-                    } else {
-                %>
-                <div class="col-12 d-flex shopping-box"><a href="../account/login.jsp" onclick="showAlert()" class="ml-auto btn hvr-hover">Thanh Toán</a> </div>
-                <script>
-                    function showAlert() {
-                        alert("Bạn cần đăng nhập trước khi thanh toán!");
-                    }
-                </script>
-                <%}
-                }
-                %>
             </div>
         </div>
     </div>
-    <!-- End Cart -->
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn xóa địa chỉ này không?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Có, xóa nó!',
+            cancelButtonText: 'Không, hủy bỏ!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '<%= request.getContextPath() %>/deleteAddress',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Đã xóa!',
+                                'Địa chỉ đã được xóa thành công.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Lỗi!',
+                                'Không thể xóa địa chỉ.',
+                                'error'
+                            );
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>
+<%
+    String message = (String) request.getAttribute("message");
+    String messageType = (String) request.getAttribute("messageType");
+
+    if (message != null && messageType != null) {
+%>
+<script type="text/javascript">
+    Swal.fire({
+        title: 'Thông báo',
+        text: '<%= message %>',
+        icon: '<%= messageType %>'
+    }).then(function() {
+        window.location.href = 'tien_ich/List-address.jsp';
+    });
+</script>
+<%
+    }
+%>
+
+    <!-- End Cart -->
     <!-- Start Instagram Feed  -->
     <div class="instagram-box">
         <div class="main-instagram owl-carousel owl-theme">
@@ -409,6 +414,7 @@
         </div>
     </div>
     <!-- End Instagram Feed  -->
+
 
 
     <!-- Start Footer  -->

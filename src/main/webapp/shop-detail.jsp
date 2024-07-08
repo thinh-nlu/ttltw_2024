@@ -148,7 +148,7 @@
                                 class="bi bi-list "></i></a>
                         <ul class="dropdown-menu">
                             <li><a href="tien_ich/cart.jsp">Giỏ Hàng</a></li>
-                            <li><a href="tien_ich/address.jsp">Địa chỉ</a></li>
+                            <li><a href="tien_ich/List-address.jsp">Địa chỉ</a></li>
                             <li><a href="tien_ich/checkout.jsp">Thanh Toán</a></li>
                             <li><a href="tien_ich/my-account.jsp">Tài Khoản</a></li>
                             <li><a href="tien_ich/wishlist.jsp">Yêu thích</a></li>

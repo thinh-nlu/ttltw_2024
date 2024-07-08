@@ -101,17 +101,7 @@
 
     <!-- Start Main Top -->
     <header class="main-header">
-        <%
-            if(saveAddressTest != null) {
-        %>
-        <script>
-            alert("<%=saveAddressTest%>")
-        </script>
 
-        <%
-            }
-            session.removeAttribute("saveAddressTest");
-        %>
         <!-- Start Navigation -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-default bootsnav">
             <div class="container">
@@ -133,7 +123,7 @@
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tiện ích <i class="bi bi-list "></i></a>
                             <ul class="dropdown-menu">
                                 <li><a href="cart.jsp">Giỏ Hàng</a></li>
-                                <li><a href="address.jsp">Địa chỉ</a></li>
+                                <li><a href="List-address.jsp">Địa chỉ</a></li>
                                 <li><a href="checkout.jsp">Thanh toán</a></li>
                                 <li><a href="my-account.jsp">Tài Khoản</a></li>
                                 <li><a href="wishlist.jsp">Yêu thích</a></li>
@@ -166,34 +156,7 @@
                 </div>
                 <!-- End Atribute Navigation -->
             </div>
-            <!-- Start Side Menu -->
-            <div class="side">
-                <a href="#" class="close-side"><i class="fa fa-times"></i></a>
-                <li class="cart-box">
-                    <ul class="cart-list">
-                        <li>
-                            <a href="#" class="photo"><img src="../images/img-pro-01.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Delica omtantur </a></h6>
-                            <p>1x - <span class="price">$80.00</span></p>
-                        </li>
-                        <li>
-                            <a href="#" class="photo"><img src="../images/img-pro-02.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Omnes ocurreret</a></h6>
-                            <p>1x - <span class="price">$60.00</span></p>
-                        </li>
-                        <li>
-                            <a href="#" class="photo"><img src="../images/img-pro-03.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Agam facilisis</a></h6>
-                            <p>1x - <span class="price">$40.00</span></p>
-                        </li>
-                        <li class="total">
-                            <a href="#" class="btn btn-default hvr-hover btn-cart">VIEW CART</a>
-                            <span class="float-right"><strong>Total</strong>: $180.00</span>
-                        </li>
-                    </ul>
-                </li>
-            </div>
-            <!-- End Side Menu -->
+
         </nav>
         <!-- End Navigation -->
     </header>
@@ -235,32 +198,32 @@
                         <div class="title-left">
                             <h3>Địa chỉ giao hàng</h3>
                         </div>
-                        <form class="needs-validation" novalidate action="../saveAddress" method="post">
+                        <form class="needs-validation" novalidate action="../newAddress" method="post">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="firstName">Họ *</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="" value="<%=a==null ? "" :a.getFirstName()%>" required="required">
+                                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="" value="" required="required">
                                     <div class="invalid-feedback">Vui lòng nhập họ</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="lastName">Tên *</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="" value="<%=a==null ? "" :a.getLastName()%>" required="required">
+                                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="" value="" required="required">
                                     <div class="invalid-feedback">Vui lòng nhập tên</div>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="email">Email *</label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="" value="<%=a==null ? "" :a.getEmail()%>" required="required">
+                                <input type="email" class="form-control" id="email" name="email" placeholder="" value="" required="required">
                                 <div class="invalid-feedback">Vui lòng nhập địa chỉ email</div>
                             </div>
                             <div class="mb-3">
                                 <label for="contact">Số điện thoại *</label>
-                                <input type="number" class="form-control" id="contact" name="contact" placeholder="" value="<%=a==null ? "" :a.getContact()%>" required="required">
+                                <input type="number" class="form-control" id="contact" name="contact" placeholder="" value="" required="required">
                                 <div class="invalid-feedback">Vui lòng nhập số điện thoại</div>
                             </div>
                             <div class="mb-3">
                                 <label for="address">Đỉa chỉ *</label>
-                                <input type="text" class="form-control" id="address" name="address" value="<%=a==null ? "" :a.getAddress()%>" placeholder="" required="required">
+                                <input type="text" class="form-control" id="address" name="address" value="" placeholder="" required="required">
                                 <div class="invalid-feedback">Vui lòng nhập địa chỉ của bạn</div>
                             </div>
                             <hr class="mb-4">

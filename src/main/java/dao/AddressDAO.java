@@ -1,5 +1,6 @@
 package dao;
 
+import database.DBConnect;
 import model.Address;
 
 import java.sql.Connection;
@@ -18,6 +19,31 @@ public class AddressDAO {
     public AddressDAO(Connection con) {
         this.con = con;
     }
+
+    public Address getAddressById(int addressId) {
+        Address address = null;
+        query = "SELECT id, user_id, first_name, last_name, address, method_payment, email, contact FROM address WHERE id = ?";
+        try {
+            ps = con.prepareStatement(query);
+            ps.setInt(1, addressId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                address = new Address();
+                address.setId(rs.getInt(1));
+                address.setUserId(rs.getInt(2));
+                address.setFirstName(rs.getString(3));
+                address.setLastName(rs.getString(4));
+                address.setAddress(rs.getString(5));
+                address.setPaymentMethod(rs.getString(6));
+                address.setEmail(rs.getString(7));
+                address.setContact(rs.getString(8));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return address;
+    }
+
 
     public boolean insertToAddress(Address d) {
         boolean isAdd = false;
@@ -39,6 +65,26 @@ public class AddressDAO {
         }
         return isAdd;
     }
+    public boolean updateAddress(Address address) {
+        String query = "UPDATE address SET user_id = ?, first_name = ?, last_name = ?, address = ?, method_payment = ?, email = ?, contact = ? WHERE id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, address.getUserId());
+            ps.setString(2, address.getFirstName());
+            ps.setString(3, address.getLastName());
+            ps.setString(4, address.getAddress());
+            ps.setString(5, address.getPaymentMethod());
+            ps.setString(6, address.getEmail());
+            ps.setString(7, address.getContact());
+            ps.setInt(8, address.getId());
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 
     public List<Address> getAllAddress() {
@@ -65,6 +111,30 @@ public class AddressDAO {
         }
         return list;
     }
+    public List<Address> getAddressesByUserId(int userId) {
+        List<Address> addresses = new ArrayList<>();
+        query = "SELECT id, user_id, first_name, last_name, address, method_payment, email, contact FROM address WHERE user_id = ?";
+        try {
+            ps = con.prepareStatement(query);
+            ps.setInt(1, userId);
+            rs = ps.executeQuery();
+            while(rs.next()) {
+                Address a = new Address();
+                a.setId(rs.getInt(1));
+                a.setUserId(rs.getInt(2));
+                a.setFirstName(rs.getString(3));
+                a.setLastName(rs.getString(4));
+                a.setAddress(rs.getString(5));
+                a.setPaymentMethod(rs.getString(6));
+                a.setEmail(rs.getString(7));
+                a.setContact(rs.getString(8));
+                addresses.add(a);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return addresses;
+    }
 
 
 
@@ -90,6 +160,24 @@ public class AddressDAO {
             throw new RuntimeException(e);
         }
         return a;
+    }
+    public boolean deleteAddressById(int addressId) {
+        boolean isDeleted = false;
+        query = "DELETE FROM address WHERE id = ?";
+        try {
+            ps = con.prepareStatement(query);
+            ps.setInt(1, addressId);
+            int result = ps.executeUpdate();
+            isDeleted = result == 1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return isDeleted;
+    }
+
+    public static void main(String[] args) {
+        AddressDAO dao = new AddressDAO(DBConnect.getConnection());
+        dao.deleteAddressById(13);
     }
 
 }
