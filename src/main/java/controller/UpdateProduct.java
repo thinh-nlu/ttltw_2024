@@ -1,12 +1,16 @@
 package controller;
 
+import dao.LogDAO;
 import dao.ProductDAO;
 import database.DBConnect;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import model.IPAddressUtil;
+import model.Log;
 import model.Product;
+import model.User;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,13 +39,18 @@ public class UpdateProduct extends HttpServlet {
         Product p = new Product(id,title,price,unit,productFromId.getImage(),category,keyword,productFromId.getTimestamp(),quantity,productFromId.getStatus(),unitPrice);
         System.out.println(p);
         HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("success");
+        LogDAO logDAO = new LogDAO(DBConnect.getConnection());
+        String ip = IPAddressUtil.getPublicIPAddress();
         if(checkChangingProduct(p,id)) {
             boolean isUpdate = dao.updateProduct(p);
             if (isUpdate) {
                 session.setAttribute("updateProductMes","Cập nhật sản phẩm thành công");
+                logDAO.insertLog(new Log(Log.ALERT, user.getId(),ip,"Quản Lí","Cập nhật thông tin sản phẩm "+" "+p.getTitle()+" "+"thành công",0));
                 resp.sendRedirect("admin/list-products.jsp");
             } else {
                 session.setAttribute("updateProductMes","Cập nhật sản phẩm thất bại");
+                logDAO.insertLog(new Log(Log.ALERT, user.getId(),ip,"Quản Lí","Cập nhật thông tin sản phẩm "+" "+p.getTitle()+" "+"thất bại",0));
                 resp.sendRedirect("admin/list-products.jsp");
             }
         } else {

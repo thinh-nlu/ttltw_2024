@@ -1,5 +1,7 @@
 package controller;
 
+import dao.LogDAO;
+import database.DBConnect;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,6 +9,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.IPAddressUtil;
+import model.Log;
+import model.User;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,6 +35,13 @@ public class NewPassword extends HttpServlet {
 
         String newPassword = req.getParameter("password");
         String confPassword = req.getParameter("confPassword");
+
+        User user = (User) session.getAttribute("success");
+        int id = (user != null) ? user.getId() : 0;
+
+        LogDAO logDAO = new LogDAO(DBConnect.getConnection());
+        String ip = IPAddressUtil.getPublicIPAddress();
+
 
         RequestDispatcher dispatcher = null;
         if (newPassword == null || newPassword.isEmpty() || confPassword ==null || confPassword.isEmpty()){
@@ -61,9 +73,11 @@ public class NewPassword extends HttpServlet {
                 if (rowCount > 0) {
                     req.setAttribute("resetSuccess", "khôi phục mật khẩu thành công");
                     dispatcher = req.getRequestDispatcher("account/newPassword.jsp");
+                    logDAO.insertLog(new Log(Log.ALERT, id,ip,"Tài khoản","Khôi phục mật khẩu thành công",0));
                 } else {
                     req.setAttribute("resetFailed", "khôi phục mật khẩu thất bại");
                     dispatcher = req.getRequestDispatcher("account/newPassword.jsp");
+                    logDAO.insertLog(new Log(Log.ALERT, id,ip,"Tài khoản","Khôi phục mật khẩu thất bại",0));
                 }
                 dispatcher.forward(req,resp);
 

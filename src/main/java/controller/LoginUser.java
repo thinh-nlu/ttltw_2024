@@ -1,11 +1,14 @@
 package controller;
 
 import com.mysql.cj.Session;
+import dao.LogDAO;
 import dao.UserDAO;
 import database.DBConnect;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import model.IPAddressUtil;
+import model.Log;
 import model.User;
 
 import java.io.IOException;
@@ -24,9 +27,9 @@ public class LoginUser extends HttpServlet {
         String password = req.getParameter("password").trim();
         String remember = req.getParameter("remember");
 
-
-
         UserDAO dao = new UserDAO(DBConnect.getConnection());
+        LogDAO logDao = new LogDAO(DBConnect.getConnection());
+        String ip = IPAddressUtil.getPublicIPAddress();
         User user = dao.getUserByUsername(username);
         String passwordHash = hashPassword(password);
         HttpSession session = req.getSession();
@@ -39,6 +42,7 @@ public class LoginUser extends HttpServlet {
             resp.sendRedirect("account/login.jsp");
         } else if (!passwordHash.equals(user.getPassword())) {
             session.setAttribute("failed","Mật khẩu không chính xác");
+            logDao.insertLog(new Log(Log.ALERT, user.getId(),ip,"Đăng nhập","Nhập sai mật khẩu",0));
             resp.sendRedirect("account/login.jsp");
         } else {
             Cookie cookieUser = new Cookie("cookieUser",username);
@@ -58,6 +62,7 @@ public class LoginUser extends HttpServlet {
             resp.addCookie(cookieRem);
 
             session.setAttribute("success",user);
+            logDao.insertLog(new Log(Log.INFO, user.getId(),ip,"Đăng nhập","Đăng nhập thành công",0));
             resp.sendRedirect("index.jsp");
         }
     }

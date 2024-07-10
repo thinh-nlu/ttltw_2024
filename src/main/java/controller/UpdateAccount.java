@@ -1,5 +1,6 @@
 package controller;
 
+        import dao.LogDAO;
         import dao.UserDAO;
         import database.DBConnect;
         import jakarta.servlet.ServletException;
@@ -8,6 +9,8 @@ package controller;
         import jakarta.servlet.http.HttpServletRequest;
         import jakarta.servlet.http.HttpServletResponse;
         import jakarta.servlet.http.HttpSession;
+        import model.IPAddressUtil;
+        import model.Log;
         import model.User;
 
         import java.io.IOException;
@@ -25,6 +28,9 @@ public class UpdateAccount extends HttpServlet {
         String contact = req.getParameter("contact");
         String email = req.getParameter("email");
         HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("success");
+        LogDAO logDAO = new LogDAO(DBConnect.getConnection());
+        String ip = IPAddressUtil.getPublicIPAddress();
 
         if (name == null || name.isEmpty() || contact == null || contact.isEmpty() || email == null || email.isEmpty()) {
             session.setAttribute("failedUpdateAccount", "Vui lòng nhập đầy đủ thông tin");
@@ -55,10 +61,12 @@ public class UpdateAccount extends HttpServlet {
             session.setAttribute("successUpdateAccount", "Cập nhật thông tin thành công");
             session.setAttribute("success", u);
             session.removeAttribute("failedUpdateAccount");
+            logDAO.insertLog(new Log(Log.INFO, user.getId(),ip,"Tài khoản","Cập nhật thông tin tài khoản thành công",0));
             resp.sendRedirect("tien_ich/my-account.jsp");
         } else {
             session.setAttribute("failedUpdateAccount", "Cập nhật thông tin thất bại");
             resp.sendRedirect("tien_ich/my-account.jsp");
+            logDAO.insertLog(new Log(Log.INFO, user.getId(),ip,"Tài khoản","Cập nhật thông tin tài khoản không thành công",0));
         }
     }
 }

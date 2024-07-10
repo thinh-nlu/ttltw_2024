@@ -16,6 +16,7 @@
     if(cartProduct == null) cartProduct = new CartProduct();
     WishlistDAO wDao = new WishlistDAO(DBConnect.getConnection());
     List<Wishlist> wishlistList = new ArrayList<>();
+    wishlistList = wDao.getAllWishlistByUserID(user.getId());
     ProductDAO dao = new ProductDAO(DBConnect.getConnection());
 %>
 <!DOCTYPE html>
