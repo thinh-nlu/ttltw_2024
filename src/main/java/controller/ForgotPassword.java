@@ -1,5 +1,7 @@
 package controller;
 
+import dao.LogDAO;
+import database.DBConnect;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,6 +9,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.IPAddressUtil;
+import model.Log;
+import model.User;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -25,6 +30,9 @@ public class ForgotPassword extends HttpServlet {
         RequestDispatcher dispatcher = null;
         int otpvalue = 0;
         HttpSession mySession = request.getSession();
+        LogDAO logDAO = new LogDAO(DBConnect.getConnection());
+        String ip = IPAddressUtil.getPublicIPAddress();
+        logDAO.insertLog(new Log(Log.DANGER,0,ip,"Quên Mật Khẩu","Tài khoản có email"+" "+email+" "+"Yêu cầu lấy lại mật khẩu",0));
 
         // Check if the email is not null and not empty
         if (email != null && !email.equals("")) {

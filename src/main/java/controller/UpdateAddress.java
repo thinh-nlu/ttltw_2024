@@ -2,8 +2,11 @@ package controller;
 
 
 import dao.AddressDAO;
+import dao.LogDAO;
 import database.DBConnect;
 import model.Address;
+import model.IPAddressUtil;
+import model.Log;
 import model.User;
 
 import jakarta.servlet.ServletException;
@@ -22,6 +25,8 @@ public class UpdateAddress extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("success");
+        LogDAO logDAO = new LogDAO(DBConnect.getConnection());
+        String ip = IPAddressUtil.getPublicIPAddress();
 
         if (user == null) {
             resp.sendRedirect("login.jsp");
@@ -54,9 +59,11 @@ public class UpdateAddress extends HttpServlet {
 
         if (success) {
             req.setAttribute("message", "Cập nhật thành công");
+            logDAO.insertLog(new Log(Log.INFO, user.getId(),ip,"Địa Chỉ","Cập nhật địa chỉ thành công",0));
             req.setAttribute("messageType", "success");
         } else {
             req.setAttribute("message", "Cập nhật thất bại");
+            logDAO.insertLog(new Log(Log.INFO, user.getId(),ip,"Địa Chỉ","Cập nhật địa chỉ thất bại",0));
             req.setAttribute("messageType", "error");
         }
 

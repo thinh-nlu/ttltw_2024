@@ -1,5 +1,6 @@
 package controller;
 
+import dao.LogDAO;
 import dao.UserDAO;
 import database.DBConnect;
 import jakarta.servlet.ServletException;
@@ -8,6 +9,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.IPAddressUtil;
+import model.Log;
 import model.User;
 
 import java.io.IOException;
@@ -29,6 +32,9 @@ public class UpdatePassword extends HttpServlet {
         User u = dao.getUserById(id);
 
         HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("success");
+        LogDAO logDAO = new LogDAO(DBConnect.getConnection());
+        String ip = IPAddressUtil.getPublicIPAddress();
         if (oldpassword == null || oldpassword.isEmpty() || newpassword == null || newpassword.isEmpty() || confirmpassword == null || confirmpassword.isEmpty()) {
 
             session.setAttribute("failedUpdatePassword", "Vui lòng nhập đầy đủ thông tin");
@@ -51,17 +57,20 @@ public class UpdatePassword extends HttpServlet {
         }else {
             session.setAttribute("failedUpdatePassword", "Mật khẩu cũ không khớp");
             resp.sendRedirect("tien_ich/my-account.jsp");
+            logDAO.insertLog(new Log(Log.DANGER, user.getId(),ip,"Đổi mật khẩu","Nhập mật khẩu cũ không đúng ",0));
             return;
 
         }
         boolean isUpdate = dao.updatePassword(u);
         if (isUpdate) {
             session.setAttribute("successUpdatePassword", "Cập nhật mật khẩu thành công");
+            logDAO.insertLog(new Log(Log.DANGER, user.getId(),ip,"Đổi mật khẩu","Đổi mật khẩu thành công",0));
             session.setAttribute("success", u);
             session.removeAttribute("failedUpdatePassword");
             resp.sendRedirect("tien_ich/my-account.jsp");
         } else {
             session.setAttribute("failedUpdatePassword", "Cập nhật mật khẩu thất bại");
+            logDAO.insertLog(new Log(Log.DANGER, user.getId(),ip,"Đổi mật khẩu","Đổi mật khẩu thất bại",0));
             resp.sendRedirect("tien_ich/my-account.jsp");
         }
 
