@@ -6,6 +6,7 @@ import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.Version;
+import dao.LogDAO;
 import dao.UserDAO;
 import database.DBConnect;
 import jakarta.servlet.RequestDispatcher;
@@ -17,6 +18,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Constants;
 import com.restfb.types.User;
+import model.IPAddressUtil;
+import model.Log;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Request;
 
@@ -34,6 +37,8 @@ public class LoginFacebook extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        LogDAO logDAO = new LogDAO(DBConnect.getConnection());
+        String ip = IPAddressUtil.getPublicIPAddress();
         String code = request.getParameter("code");
 
         if (code == null || code.isEmpty()) {
@@ -47,10 +52,13 @@ public class LoginFacebook extends HttpServlet {
             if (userDAO.isFbUser(name)&&userDAO.isUsernameExist(name)){
                 session.setAttribute("success",user1);
                 response.sendRedirect("index.jsp");
+                logDAO.insertLog(new Log(Log.INFO, user1.getId(),ip,"Đăng nhập","Đăng nhập thành công",0));
+
             }else {
                 userDAO.registerUser(user1);
                 session.setAttribute("success",user1);
                 response.sendRedirect("index.jsp");
+                logDAO.insertLog(new Log(Log.INFO, user1.getId(),ip,"Đăng nhập","Đăng nhập không thành công",0));
             }
         }
 

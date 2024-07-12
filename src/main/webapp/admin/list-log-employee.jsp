@@ -5,13 +5,15 @@
 <%@ page import="dao.UserDAO" %>
 <%@ page import="model.Product" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.text.DecimalFormat" %>
+<%@ page import="model.Log" %>
+<%@ page import="dao.LogDAO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
-    ProductDAO dao = new ProductDAO(DBConnect.getConnection());
-    List<Product> allList = dao.getAllProduct();
+    LogDAO logDAO  = new LogDAO(DBConnect.getConnection());
+    List<Log> logList = logDAO.getLogsByAdminStatus("3");
     User user = (User) session.getAttribute("success");
+
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,15 +37,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.datatables.net/2.0.5/js/dataTables.js"></script>
     <link href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css" rel="stylesheet">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 </head>
 
 <body class="hold-transition lightblue-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
@@ -223,141 +217,187 @@
             </div>
         </div>
         <section class="content">
-            <h3 class="text-center text-dark pb-3 display-4 font-weight-normal" >Quản Lí Khuyến Mãi</h3>
-            <div class="px-lg-5 pt-xl-5">
-                <div class="px-lg-5 pt-xl-1">
-                    <table id="dataTable" class="table table-striped text-center">
-                        <thead class="bg-dark">
-                        <tr class="text-light">
-                            <th>ID</th>
-                            <th>Tên sản phẩm</th>
-                            <th>Hình ảnh sản phẩm</th>
-                            <th>Giá gốc</th>
-                            <th>Giá sau khuyến mãi</th>
-                            <th>Khuyễn mãi</th>
-                        </tr>
-                        </thead>
-                        <tbody class="bg-light text-dark">
-                        <%
-                            for (Product p: allList) {
-                                if (p!=null) {
-                                    String price = p.getPrice();
-                                    DecimalFormat formatter = new DecimalFormat("#,###");
-                                    double originalPrice = Double.parseDouble(price.split("\\.")[0]);
-                                    String formattedPrice = formatter.format(originalPrice);
-                                    int discount = p.getDiscount();
-                                    double discountedPrice = originalPrice - (originalPrice * discount / 100.0);
-                                    String formattedDiscountedPrice = formatter.format(discountedPrice);
+            <h3 class="text-center text-dark pb-3 display-4 font-weight-normal" >Log của nhân viên</h3>
+            <div class="pl-4">
+                <select class="form-select " aria-label="" onchange="redirectToSelectedPage(this)">
+                    <option selected>Log của nhân viên</option>
+                    <option value="list-log.jsp" >Tất cả Log</option>
+                    <option value="list-log-customer.jsp" >Log của khách hàng</option>
+                </select>
+            </div>
+            <div class="pt-2 pl-4">
+                <button type="button" class="btn btn-danger" onclick="deleteAllLogs()">Xóa tất cả log</button>
 
-                        %>
-                        <tr class='text-center text-dark font-weight-normal'>
-                            <td><%=p.getId()%></td>
-                            <td><%=p.getTitle()%></td>
-                            <td><img width="50" height="50" class='cart_img' src='../DataWeb/<%=p.getImage()%>'></td>
-                            <td> <%= formattedPrice %>đ / <%= p.getUnitPrice()%><%= p.getUnit()%></td>
-                            <td> <%= formattedDiscountedPrice %>đ /<%= p.getUnitPrice()%><%= p.getUnit()%></td>
-                            <td>
-                                <%=discount+"%"%>
-                                <a href="#" class="text-dark edit-discount" data-id="<%=p.getId()%>"><i class="bi bi-pencil-square"></i></a>
-                            </td>
-                        </tr>
+            </div>
+
+            <div class="px-lg-5 pt-xl-1">
+                <table id="dataTable" class="table table-striped text-center ">
+                    <thead class="bg-dark">
+                    <tr class="text-light">
+                        <th>ID</th>
+                        <th>Cấp độ</th>
+                        <th>Nguồn</th>
+                        <th>ID tài khoản</th>
+                        <th>IP</th>
+                        <th>Nội Dung</th>
+                        <th>Thời gian</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody class="bg-light text-dark">
+                    <%
+                        for (Log l : logList) {
+                            if (l != null) {
+                    %>
+                    <tr class='text-center text-dark font-weight-normal'>
+                        <td><%= l.getId() %></td>
                         <%
-                                }
+                            String levelClass = "";
+                            String levelText = "";
+                            switch (l.getLevel()) {
+                                case 0:
+                                    levelClass = "text-info";
+                                    levelText = "THÔNG TIN";
+                                    break;
+                                case 1:
+                                    levelClass = "text-secondary";
+                                    levelText = "CẢNH BÁO";
+                                    break;
+                                case 2:
+                                    levelClass = "text-warning";
+                                    levelText = "NGUY HIỂM";
+                                    break;
+                                case 3:
+                                    levelClass = "text-danger";
+                                    levelText = "BÁO ĐỘNG";
+                                    break;
+                                default:
+                                    levelClass = "text-dark";
+                                    levelText = "KHÔNG XÁC ĐỊNH";
+                                    break;
                             }
                         %>
-                        </tbody>
-                    </table>
+                        <td class="<%= levelClass %>"><%= levelText %></td>
+                        <td><%= l.getSrc() %></td>
+                        <td><%= l.getUserId() %></td>
+                        <td><%= l.getIp() %></td>
+                        <td><%= l.getContent() %></td>
+                        <td><%= l.getCreatAt() %></td>
+                        <td><a class='text-dark' onclick="deleteLog(<%= l.getId() %>)"><i class="bi bi-trash"></i></a></td>
+                    </tr>
+                    <%
+                            }
+                        }
+                    %>
+                    </tbody>
+                </table>
+                <script>
+                    function deleteAllLogs() {
+                        Swal.fire({
+                            title: 'Xác nhận xóa',
+                            text: "Bạn có chắc chắn muốn xóa tất cả log?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Xác nhận',
+                            cancelButtonText: 'Hủy bỏ'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                fetch('${pageContext.request.contextPath}/deleteAllLogs', {
+                                    method: 'POST'
+                                })
+                                    .then(response => {
+                                        if (response.ok) {
+                                            Swal.fire(
+                                                'Đã xóa!',
+                                                'Tất cả log đã được xóa.',
+                                                'success'
+                                            ).then(() => {
+                                                location.reload();
+                                            });
+                                        } else {
+                                            console.log("Có lỗi xảy ra khi xóa tất cả log");
+                                            Swal.fire(
+                                                'Lỗi!',
+                                                'Xảy ra lỗi khi xóa log.',
+                                                'error'
+                                            );
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.error("Lỗi khi gửi yêu cầu xóa tất cả log: " + err);
+                                        Swal.fire(
+                                            'Lỗi!',
+                                            'Đã xảy ra lỗi khi gửi yêu cầu.',
+                                            'error'
+                                        );
+                                    });
+                            }
+                        });
+                    }
+                    function deleteLog(id) {
+                        $.ajax({
+                            url: "${pageContext.request.contextPath}/RemoveLogAdmin",
+                            type: "GET",
+                            data: {
+                                id: id
+                            },
+                            success: function () {
+                                $("#logRow" + id).remove();
+                                location.reload();// Xóa dòng log khỏi bảng sau khi xóa thành công
+                            },
+                            error: function () {
+                                alert("Đã xảy ra lỗi khi xóa log.");
+                            }
+                        });
+                    }
+                    function redirectToSelectedPage(select) {
+                        var selectedOption = select.value;
+                        if (selectedOption) {
+                            window.location.href = selectedOption;
+                        }
+                    }
+                    new DataTable('#dataTable', {
+                        language: {
+                            processing: "Đang tải dữ liệu",
+                            search: "Tìm kiếm",
+                            lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
+                            info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
+                            loadingRecords: "",
+                            zeroRecords: "Không có tìm kiếm phù hợp",
+                            emptyTable: "Không có dữ liệu",
+                            paginate: {
+                                first: "Trang đầu",
+                                previous: "Trang trước",
+                                next: "Trang sau",
+                                last: "Trang cuối"
+                            },
+                            aria: {
+                                sortAscending: "sắp xếp tăng dần",
+                                sortDescending: "sắp xếp giảm dần",
+                            }
+                        },
+                        layout: {
+                            bottomEnd: {
+                                paging: {
+                                    boundaryNumbers: false
+                                }
+                            }
+                        }
+                    });
+                </script>
 
-                </div>
+
+
+
+
             </div>
         </section>
     </div>
-    <div class="modal fade" id="discountModal" tabindex="-1" aria-labelledby="discountModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="discountModalLabel">Khuyến mãi</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="discountForm">
-                        <div class="form-group">
-                            <label for="discountValue">Cập nhật giảm giá (%)</label>
-                            <input type="number" class="form-control" id="discountValue" name="discountValue" required>
-                        </div>
-                        <input type="hidden" id="productId" name="productId">
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" id="saveDiscount">Lưu thay đổi</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        $(document).ready(function () {
-            $('.edit-discount').on('click', function () {
-                const productId = $(this).data('id');
-                $('#productId').val(productId);
-                $('#discountModal').modal('show');
-            });
 
-            $('#saveDiscount').on('click', function () {
-                const discountValue = $('#discountValue').val();
-                const productId = $('#productId').val();
-
-                if (discountValue < 0 || discountValue > 99) {
-                    alert('Giá trị giảm giá phải nằm trong khoảng từ 0 đến 99%.');
-                    return;
-                }
-
-                $.ajax({
-                    url: '<%= request.getContextPath() %>/updateDiscount',  // ensure the context path is correct
-                    type: 'POST',
-                    data: {
-                        id: productId,
-                        newDiscount: discountValue
-                    },
-                    success: function (response) {
-                        alert(response);
-                        $('#discountModal').modal('hide');
-                        location.reload();
-                    },
-                    error: function () {
-                        alert('Cập nhật thất bại');
-                    }
-                });
-            });
-        });
-
-    </script>
-    <script>
-        new DataTable('#dataTable', {
-            language: {
-                processing: "Đang tải dữ liệu",
-                search: "Tìm kiếm",
-                lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
-                info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
-                loadingRecords: "",
-                zeroRecords: "Không có tìm kiếm phù hợp",
-                emptyTable: "Không có dữ liệu",
-                paginate: {
-                    first: "Trang đầu",
-                    previous: "Trang trước",
-                    next: "Trang sau",
-                    last: "Trang cuối"
-                },
-                aria: {
-                    sortAscending: "sắp xếp tăng dần",
-                    sortDescending: "sắp xếp giảm dần",
-                }
-            },
-        });
-    </script>
 </div>
+
 
 <!-- REQUIRED SCRIPTS -->
 <script src="../js/jquery.min.js"></script>

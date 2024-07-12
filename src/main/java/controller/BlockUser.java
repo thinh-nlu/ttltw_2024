@@ -32,10 +32,10 @@ public class BlockUser extends HttpServlet {
         if(user==null) return;
         if(user.getIsActive().equals("1")) {
             isBlock = dao.blockUser("0",id);
-            logDAO.insertLog(new Log(Log.ALERT, user1.getId(),ip,"Quản Lí","Chặn tài khoản :"+user.getName(),0));
+            logDAO.insertLog(new Log(Log.ALERT, user1.getId(),ip,"Quản Lí","Chặn tài khoản "+" "+user.getName(),0));
         } else {
             isBlock = dao.blockUser("1",id);
-            logDAO.insertLog(new Log(Log.ALERT, user1.getId(),ip,"Quản Lí","Mở chặn tài khoản :"+user.getName(),0));
+            logDAO.insertLog(new Log(Log.ALERT, user1.getId(),ip,"Quản Lí","Mở chặn tài khoản "+" "+user.getName(),0));
         }
         resp.sendRedirect("admin/list-user.jsp");
     }

@@ -31,9 +31,10 @@ public class DeleteUser extends HttpServlet {
             boolean isDelete = dao.deleteUser(id);
             if(isDelete) {
                 session.setAttribute("deleteSuccess","Đã Xóa Thành Công");
-                logDAO.insertLog(new Log(Log.DANGER, user1.getId(),ip,"Quản Lí","Xóa 1 tài khoản",0));
+                logDAO.insertLog(new Log(Log.DANGER, user1.getId(),ip,"Quản Lí","Xóa tài khoản"+" "+user.getName()+" "+"thành công",0));
             } else {
                 session.setAttribute("deleteFailed","Hệ Thống Đang Gap Lỗi");
+                logDAO.insertLog(new Log(Log.DANGER, user1.getId(),ip,"Quản Lí","Xóa tài khoản"+" "+user.getName()+" "+"thất bại",0));
             }
         }
         resp.sendRedirect("admin/list-user.jsp");
