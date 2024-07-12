@@ -181,5 +181,14 @@ public class OrderDAO {
         return exists;
     }
 
+    public void deleteOrderById(int orderId) {
+        String query = "DELETE FROM orders WHERE id = ?";
+        try (PreparedStatement ps = this.con.prepareStatement(query)) {
+            ps.setInt(1, orderId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
