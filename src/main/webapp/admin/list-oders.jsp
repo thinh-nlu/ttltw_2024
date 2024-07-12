@@ -18,6 +18,49 @@
   if(user!=null) orderList = dao.getAllOrder();
 
 %>
+<style>
+  .form-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .form-check-input {
+    margin: 0;
+  }
+
+  #delete-orders {
+    margin-left: 10px;
+  }
+
+  .hoverable:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
+
+  .table td, .table th {
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  .form-check-input {
+    width: 18px;
+    height: 18px;
+  }
+
+
+  .table thead th, .table tbody td {
+    padding: 10px;
+    text-align: center;
+  }
+
+
+  #delete-orders {
+    white-space: nowrap;
+  }
+
+
+</style>
 
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
@@ -203,6 +246,11 @@
       <th>Thời gian</th>
       <th>Trạng thái</th>
       <th>Chi tiết</th>
+      <th>
+        <button id="select-all" class="btn btn-primary btn-sm ml-2">Chọn tất cả</button>
+        <button id="delete-orders" class="btn btn-danger btn-sm ml-2">Xóa</button>
+      </th>
+
     </tr>
     </thead>
     <tbody class="bg-light text-dark">
@@ -211,18 +259,24 @@
     %>
 
     <tr class='text-center text-dark font-weight-normal  '>
-      <td><%=o.getId()%></td>
-      <td><%= (userDAO.getUserById(o.getUserId()) != null) ? userDAO.getUserById(o.getUserId()).getName() : "Không xác định" %></td>
-      <td><%=o.getAmountDue() + " VND"%></td>
-      <td><%=o.getInvoiceNumber()%></td>
-      <td><%=o.getOrderDate()%></td>
-      <td><%=o.getOrderStatus().equals("complete") ? "Đã thanh toán" : "Đang chờ xử lý"%></td>
-      <td><a href="../orderDetail?orderId=<%=o.getId()%>" class='text-dark'><i class="bi bi-arrow-right-circle"></i></a></td>
+      <td><%= o.getId() %></td>
+      <td class="hoverable"><%= (userDAO.getUserById(o.getUserId()) != null) ? userDAO.getUserById(o.getUserId()).getName() : "Không xác định" %></td>
+      <td class="hoverable"><%= o.getAmountDue() + " VND" %></td>
+      <td class="hoverable"><%= o.getInvoiceNumber() %></td>
+      <td class="hoverable"><%= o.getOrderDate() %></td>
+      <td class="hoverable"><%= o.getOrderStatus().equals("complete") ? "Đã thanh toán" : "Đang chờ xử lý" %></td>
+      <td class="hoverable"><a href="../orderDetail?orderId=<%= o.getId() %>" class='text-dark'><i class="bi bi-arrow-right-circle"></i></a></td>
+      <td>
+        <div class="form-check">
+          <input class="form-check-input order-checkbox" type="checkbox" name="orderCheckbox" value="<%= o.getId() %>" id="order<%= o.getId() %>">
+        </div>
+      </td>
       <%
         }%>
     </tr>
     </tbody>
   </table>
+
   <%
     }
   %>
@@ -241,6 +295,44 @@
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/popper.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
+<script>
+  document.getElementById('select-all').onclick = function() {
+    var checkboxes = document.getElementsByName('orderCheckbox');
+    for (var checkbox of checkboxes) {
+      checkbox.checked = this.checked;
+    }
+  }
+
+  document.getElementById('delete-orders').onclick = function() {
+    var checkboxes = document.getElementsByName('orderCheckbox');
+    var selectedOrders = [];
+    for (var checkbox of checkboxes) {
+      if (checkbox.checked) {
+        selectedOrders.push(checkbox.value);
+      }
+    }
+
+    if (selectedOrders.length > 0) {
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '${pageContext.request.contextPath}/deleteOrders';
+
+      selectedOrders.forEach(function(orderId) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'orderIds';
+        input.value = orderId;
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+    } else {
+      alert('Vui lòng chọn ít nhất một đơn hàng để xóa.');
+    }
+  }
+</script>
+
 <!-- ALL PLUGINS -->
 <script src="../js/jquery.superslides.min.js"></script>
 <script src="../js/bootstrap-select.js"></script>
