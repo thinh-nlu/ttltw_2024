@@ -46,12 +46,12 @@ public class AddProduct extends HttpServlet {
         boolean isAdd = dao.addProduct(p);
 
         if (isAdd) {
-            logDAO.insertLog(new Log(Log.ALERT, user.getId(),ip,"Quản Lí","Thêm 1 sản phẩm mới thành công",0));
+            logDAO.insertLog(new Log(Log.ALERT, user.getId(),ip,"Quản Lí","Thêm sản phẩm "+p.getTitle()+" mới thành công",0));
             session.setAttribute("addProduct","Thêm sản phẩm thành công");
             resp.sendRedirect("admin/insert-product.jsp");
 
         } else {
-            logDAO.insertLog(new Log(Log.ALERT, user.getId(),ip,"Quản Lí","Thêm 1 sản phẩm mới thất bại",0));
+            logDAO.insertLog(new Log(Log.ALERT, user.getId(),ip,"Quản Lí","Thêm 1 sản phẩm "+p.getTitle()+" thất bại",0));
             session.setAttribute("addProduct","Thêm sản phẩm thất bại");
             resp.sendRedirect("admin/insert-product.jsp");
         }

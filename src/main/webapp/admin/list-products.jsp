@@ -142,7 +142,7 @@
                         <a href="insert-product.jsp" class="nav-link">
                             <i class="bi bi-plus-square"></i>
                             <p>
-                               Thêm sản phẩm
+                                Thêm sản phẩm
                             </p>
                         </a>
                     </li>
@@ -154,20 +154,6 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="list-oders.jsp" class="nav-link">
-                            <i class="bi bi-basket"></i>
-                            <p>Quản lí đơn hàng</p>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <p>Giám sát đơn hàng</p>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
                         <a href="list-user.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
                             <p>Quản lí người dùng</p>
@@ -175,11 +161,24 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <p>Quản lí nhân viên</p>
+                        <a href="list-oders.jsp" class="nav-link">
+                            <i class="bi bi-basket"></i>
+                            <p>Quản lí đơn hàng</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Giám sát đơn hàng</p>
+                        </a>
+                    </li>
+
+                    <%-- Kiểm tra và ẩn menu nếu isAdmin là 3 --%>
+                    <%   String isAdmin = user.getIsAdmin();
+                        if (!isAdmin.equals("3")) { %>
+
+
+
 
                     <li class="nav-item">
                         <a href="edit_role.jsp" class="nav-link">
@@ -189,11 +188,28 @@
                     </li>
 
                     <li class="nav-item">
+                        <a href="list-employee.jsp" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Quản lí nhân viên</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="list-log.jsp" class="nav-link">
+                            <i class="bi bi-clipboard2-data-fill"></i>
+                            <p>Quản Lí Log</p>
+                        </a>
+                    </li>
+                    <% } %>
+
+                    <li class="nav-item">
                         <a href="list_discount.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
                             <p>Khuyến mãi sản phẩm</p>
                         </a>
                     </li>
+
+
                 </ul>
             </nav>
         </div>

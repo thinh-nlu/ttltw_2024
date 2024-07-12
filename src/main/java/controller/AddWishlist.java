@@ -1,5 +1,6 @@
 package controller;
 import dao.LogDAO;
+import dao.ProductDAO;
 import dao.WishlistDAO;
 import database.DBConnect;
 import jakarta.servlet.ServletException;
@@ -8,10 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.IPAddressUtil;
-import model.Log;
-import model.User;
-import model.Wishlist;
+import model.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +24,8 @@ public class AddWishlist extends HttpServlet {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("success");
         int productId = Integer.parseInt(req.getParameter("productId"));
+        ProductDAO productDAO = new ProductDAO( DBConnect.getConnection());
+        Product p = productDAO.getProductById(productId);
         LogDAO logDAO = new LogDAO(DBConnect.getConnection());
         String ip = IPAddressUtil.getPublicIPAddress();
 
@@ -50,7 +50,7 @@ public class AddWishlist extends HttpServlet {
         boolean isAdd = wdao.addWishlist(wishlist);
 
         if (isAdd) {
-            logDAO.insertLog(new Log(Log.INFO, user.getId(),ip,"Mua Hàng","Thêm 1 sản phẩm vào danh sách yêu thích",0));
+            logDAO.insertLog(new Log(Log.INFO, user.getId(),ip,"Mua Hàng","Thêm sản phẩm "+" "+p.getTitle()+" "+"vào danh sách yêu thích",0));
             resp.sendRedirect("tien_ich/wishlist.jsp");
         }
     }

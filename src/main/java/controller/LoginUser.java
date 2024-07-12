@@ -39,6 +39,7 @@ public class LoginUser extends HttpServlet {
             resp.sendRedirect("account/login.jsp");
         } else if (user.getIsActive().equals("0")) {
             session.setAttribute("failed","Tài Khoản Đã Bị Chặn");
+            logDao.insertLog(new Log(Log.ALERT, user.getId(),ip,"Đăng nhập","Đăng nhập vào tài khoản bị chặn",0));
             resp.sendRedirect("account/login.jsp");
         } else if (!passwordHash.equals(user.getPassword())) {
             session.setAttribute("failed","Mật khẩu không chính xác");

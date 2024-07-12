@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.IPAddressUtil;
 import model.Log;
+import model.Product;
 import model.User;
 
 import java.io.IOException;
@@ -47,14 +48,15 @@ public class UpdateDiscount extends HttpServlet {
         }
 
         ProductDAO productDAO = new ProductDAO(DBConnect.getConnection());
+        Product p = productDAO.getProductById(Integer.parseInt(idParam));
         boolean isUpdated = productDAO.updateDiscount(id, newDiscount);
 
         if (isUpdated) {
             response.getWriter().write("Cập nhật thành công.");
-            logDAO.insertLog(new Log(Log.ALERT, user.getId(),ip,"Quản Lí","Cập nhật khuyến mãi thành công",0));
+            logDAO.insertLog(new Log(Log.ALERT, user.getId(),ip,"Quản Lí","Cập nhật khuyến mãi sản phẩm"+" "+p.getTitle()+" "+" thành công",0));
         } else {
             response.getWriter().write("cập nhật thất bại.");
-            logDAO.insertLog(new Log(Log.ALERT, user.getId(),ip,"Quản Lí","Cập nhật khuyến mãi thất bại",0));
+            logDAO.insertLog(new Log(Log.ALERT, user.getId(),ip,"Quản Lí","Cập nhật khuyến mãi sản phẩm"+" "+p.getTitle()+" "+" thất bại",0));
         }
     }
 }
