@@ -10,6 +10,8 @@ public class Address {
     private String address;
     private String paymentMethod;
 
+    private int isSelect;
+
     public Address(){}
 
     public Address(int id,int userId, String firstName, String lastName, String email, String contact, String address, String paymentMethod) {
@@ -31,6 +33,17 @@ public class Address {
         this.paymentMethod = paymentMethod;
         this.email = email;
         this.contact = contact;
+    }
+
+    public Address(int userId, String firstName, String lastName, String email, String contact, String address, String paymentMethod, int isSelect) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.contact = contact;
+        this.address = address;
+        this.paymentMethod = paymentMethod;
+        this.isSelect = isSelect;
     }
 
     public int getUserId() {
@@ -97,6 +110,14 @@ public class Address {
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public int getIsSelect() {
+        return isSelect;
+    }
+
+    public void setIsSelect(int isSelect) {
+        this.isSelect = isSelect;
     }
 
     @Override
