@@ -255,27 +255,24 @@
                             <td>
                                 <%
                                     String role = null;
-                                    String isAdmin = u.getIsAdmin();
-                                    if (isAdmin.equals("0")){
+                                    String userIsAdmin = u.getIsAdmin(); // Đổi tên biến để tránh xung đột
+                                    if (userIsAdmin.equals("0")){
                                         role = "QUẢN LÍ";
-                                    } else if (isAdmin.equals("2")||isAdmin.equals("1")) {
+                                    } else if (userIsAdmin.equals("2") || userIsAdmin.equals("1")) {
                                         role = "KHÁCH HÀNG";
-                                    } else if (isAdmin.equals("3")) {
+                                    } else if (userIsAdmin.equals("3")) {
                                         role = "NHÂN VIÊN";
                                     }
-
                                 %>
                                 <form action="../UpdateRole" method="post">
                                     <input type="hidden" name="userId" value="<%= u.getId() %>">
-
                                     <select name="newRole">
-                                        <option selected ><%=role%></option>
+                                        <option selected><%=role%></option>
                                         <option value="1">KHÁCH HÀNG</option>
                                         <option value="3">NHÂN VIÊN</option>
                                         <option value="0">QUẢN LÍ</option>
                                     </select>
-
-                                    <button type="submit" class="btn btn-info" >Cập nhật</button>
+                                    <button type="submit" class="btn btn-info">Cập nhật</button>
                                 </form>
                             </td>
                         </tr>

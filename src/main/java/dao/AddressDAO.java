@@ -90,7 +90,7 @@ public class AddressDAO {
     public List<Address> getAllAddress() {
         List<Address> list = new ArrayList<>();
         Address a;
-        query = "SELECT id, user_id, first_name, last_name, address, method_payment, email, contact FROM address";
+        query = "SELECT id, user_id, first_name, last_name, address, method_payment, email, contact, isSelect FROM address";
         try {
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
@@ -104,6 +104,7 @@ public class AddressDAO {
                 a.setPaymentMethod(rs.getString(6));
                 a.setEmail(rs.getString(7));
                 a.setContact(rs.getString(8));
+                a.setIsSelect(rs.getInt(9));
                 list.add(a);
             }
         } catch (SQLException e) {
@@ -113,7 +114,7 @@ public class AddressDAO {
     }
     public List<Address> getAddressesByUserId(int userId) {
         List<Address> addresses = new ArrayList<>();
-        query = "SELECT id, user_id, first_name, last_name, address, method_payment, email, contact FROM address WHERE user_id = ?";
+        query = "SELECT id, user_id, first_name, last_name, address, method_payment, email, contact, isSelect FROM address WHERE user_id = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setInt(1, userId);
@@ -128,6 +129,7 @@ public class AddressDAO {
                 a.setPaymentMethod(rs.getString(6));
                 a.setEmail(rs.getString(7));
                 a.setContact(rs.getString(8));
+                a.setIsSelect(rs.getInt(9));
                 addresses.add(a);
             }
         } catch (SQLException e) {
@@ -140,7 +142,7 @@ public class AddressDAO {
 
     public Address getAddressByUserId(int id) {
         Address a = null;
-        query = "SELECT id, user_id, first_name, last_name, address, method_payment, email, contact FROM address WHERE user_id = ?";
+        query = "SELECT id, user_id, first_name, last_name, address, method_payment, email, contact, isSelect FROM address WHERE user_id = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setInt(1, id);
@@ -155,6 +157,7 @@ public class AddressDAO {
                 a.setPaymentMethod(rs.getString(6));
                 a.setEmail(rs.getString(7));
                 a.setContact(rs.getString(8));
+                a.setIsSelect(rs.getInt(9));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -175,9 +178,60 @@ public class AddressDAO {
         return isDeleted;
     }
 
+    public boolean updateIsSelect(int addressId, int userId) {
+        Connection conn = null;
+        PreparedStatement ps1 = null;
+        PreparedStatement ps2 = null;
+        boolean isSuccess = false;
+
+        try {
+            conn = con;
+            // Start transaction
+            conn.setAutoCommit(false);
+
+            // Update all addresses of the user to set isSelect to 0
+            String query1 = "UPDATE address SET isSelect = 0 WHERE user_id = ?";
+            ps1 = conn.prepareStatement(query1);
+            ps1.setInt(1, userId);
+            ps1.executeUpdate();
+
+            // Update the specific address to set isSelect to 1
+            String query2 = "UPDATE address SET isSelect = 1 WHERE id = ?";
+            ps2 = conn.prepareStatement(query2);
+            ps2.setInt(1, addressId);
+            int rowsAffected = ps2.executeUpdate();
+
+            // Commit transaction
+            conn.commit();
+            isSuccess = rowsAffected > 0;
+
+        } catch (SQLException e) {
+            try {
+                if (conn != null) {
+                    // Rollback transaction in case of error
+                    conn.rollback();
+                }
+            } catch (SQLException rollbackEx) {
+                throw new RuntimeException("Failed to rollback transaction", rollbackEx);
+            }
+            throw new RuntimeException("Failed to update isSelect field", e);
+        } finally {
+            try {
+                if (ps1 != null) ps1.close();
+                if (ps2 != null) ps2.close();
+                if (conn != null) conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException("Failed to close resources", e);
+            }
+        }
+
+        return isSuccess;
+    }
+
+
     public static void main(String[] args) {
         AddressDAO dao = new AddressDAO(DBConnect.getConnection());
-        dao.deleteAddressById(13);
+        dao.getAddressByUserId(1);
     }
 
 }

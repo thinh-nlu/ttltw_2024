@@ -237,14 +237,15 @@
         <div class="row">
             <div class="col-sm-6 col-lg-6 mb-3 mx-auto">
                 <div class="checkout-address">
-                    <table class=" table">
+                    <table class="table table-striped">
                         <tr>
-                            <th>Họ</th>
-                            <th>Tên</th>
-                            <th>Email</th>
-                            <th>số điện thoại</th>
-                            <th>Địa chỉ</th>
-                            <th>Thanh toán</th>
+                            <th class="text-center">Họ</th>
+                            <th class="text-center">Tên</th>
+                            <th class="text-center">Email</th>
+                            <th class="text-center">Số điện thoại</th>
+                            <th colspan="7" class="text-center">Địa chỉ</th>
+                            <th class="text-center">Thanh toán</th>
+                            <th></th>
                             <th></th>
                             <th></th>
                         </tr>
@@ -254,16 +255,28 @@
                             <td><%= address.getLastName() %></td>
                             <td><%= address.getEmail() %></td>
                             <td><%= address.getContact() %></td>
-                            <td><%= address.getAddress() %></td>
+                            <td colspan="7"><%= address.getAddress() %></td>
                             <td><%= address.getPaymentMethod() %></td>
                             <td><a href="edit-address.jsp?id=<%= address.getId() %>"><i class="bi bi-pencil-square"></i></a></td>
                             <td><a href="#" onclick="confirmDelete(<%= address.getId() %>)"><i class="bi bi-trash-fill"></i></a></td>
+                            <td>
+                                <form action="../selectAddress" method="post">
+                                    <div class="form-check">
+                                        <input type="hidden" name="userId" value="<%= address.getUserId() %>">
+                                        <input type="hidden" name="addressId" value="<%= address.getId() %>">
+                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault<%= address.getId() %>"
+                                            <%= address.getIsSelect() == 1 ? "checked" : "" %>
+                                               onclick="this.form.submit()">
+                                    </div>
+                                </form>
+                            </td>
                         </tr>
                         <% } %>
                         <tr>
-                            <td colspan="7" class="text-center align-middle"><a href="new_address.jsp"><i class="bi bi-plus-circle"></i></a></td>
+                            <td colspan="15" class="text-center align-middle"><a href="new_address.jsp"><i class="bi bi-plus-circle"></i></a></td>
                         </tr>
                     </table>
+
                 </div>
             </div>
         </div>
