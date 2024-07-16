@@ -22,8 +22,8 @@ public class OrderDAO {
 
     public boolean insertOrder(Order o) {
         boolean isAdd = false;
-        query = "insert into orders(user_id, invoice_number, amount_due, order_date, order_status) " +
-                "value(?,?,?,?,?)";
+        query = "insert into orders(user_id, invoice_number, amount_due, order_date, order_status, address_id) " +
+                "value(?,?,?,?,?,?)";
         try {
             ps = con.prepareStatement(query);
             ps.setInt(1,o.getUserId());
@@ -31,6 +31,8 @@ public class OrderDAO {
             ps.setString(3,o.getAmountDue());
             ps.setTimestamp(4,o.getOrderDate());
             ps.setString(5,o.getOrderStatus());
+            ps.setString(5,o.getOrderStatus());
+            ps.setInt(6,o.getAddressId());
             int i = ps.executeUpdate();
             isAdd = i == 1;
         } catch (SQLException e) {
@@ -55,7 +57,7 @@ public class OrderDAO {
 
     public Order getOrderByInvoiceNumber(String invoiceNumber) {
         Order o = null;
-        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status FROM orders WHERE invoice_number = ?";
+        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status, address_id FROM orders WHERE invoice_number = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setString(1, invoiceNumber);
@@ -68,6 +70,7 @@ public class OrderDAO {
                 o.setAmountDue(rs.getString("amount_due"));
                 o.setOrderDate(rs.getTimestamp("order_date"));
                 o.setOrderStatus(rs.getString("order_status"));
+                o.setAddressId(rs.getInt("address_id"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -105,7 +108,21 @@ public class OrderDAO {
         query = "update orders set order_status = ? where id = ?";
         try {
             ps = con.prepareStatement(query);
-            ps.setString(1,"complete");
+            ps.setString(1,"Đã thanh toán");
+            ps.setInt(2,orderId);
+            int i = ps.executeUpdate();
+            isUpdate = i == 1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return isUpdate;
+    }
+    public boolean updateShipStatus(int orderId) {
+        boolean isUpdate = false;
+        query = "update orders set order_shipping_status = ? where id = ?";
+        try {
+            ps = con.prepareStatement(query);
+            ps.setString(1,"Chờ xác nhận");
             ps.setInt(2,orderId);
             int i = ps.executeUpdate();
             isUpdate = i == 1;
@@ -118,7 +135,7 @@ public class OrderDAO {
     public List<Order> getListOrderByUser(int userId) {
         List<Order> list = new ArrayList<>();
         Order o;
-        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status FROM orders WHERE user_id = ?";
+        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status, address_id FROM orders WHERE user_id = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setInt(1, userId);
@@ -131,6 +148,7 @@ public class OrderDAO {
                 o.setAmountDue(rs.getString("amount_due"));
                 o.setOrderDate(rs.getTimestamp("order_date"));
                 o.setOrderStatus(rs.getString("order_status"));
+                o.setAddressId(rs.getInt("address_id"));
                 list.add(o);
             }
         } catch (SQLException e) {
@@ -142,7 +160,7 @@ public class OrderDAO {
     public List<Order> getAllOrder() {
         List<Order> list = new ArrayList<>();
         Order o;
-        query = "select id, user_id, invoice_number, amount_due, order_date, order_status from orders";
+        query = "select id, user_id, invoice_number, amount_due, order_date, order_status, address_id from orders";
         try {
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
@@ -154,6 +172,7 @@ public class OrderDAO {
                 o.setAmountDue(rs.getString(4));
                 o.setOrderDate(rs.getTimestamp(5));
                 o.setOrderStatus(rs.getString(6));
+                o.setAddressId(rs.getInt(7));
                 list.add(o);
             }
         } catch (SQLException e) {

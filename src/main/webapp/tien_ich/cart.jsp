@@ -305,14 +305,14 @@
                 <%
                     if(user != null) {
                 %>
-                <div class="col-12 d-flex shopping-box"><a href="edit-address.jsp" class="ml-auto btn hvr-hover">Thanh Toán</a> </div>
+                <div class="col-12 d-flex shopping-box"><a href="../createOrder" class="ml-auto btn hvr-hover">Thanh Toán</a> </div>
                 <%
                     } else {
                 %>
-                <div class="col-12 d-flex shopping-box"><a href="../account/login.jsp" onclick="showAlert()" class="ml-auto btn hvr-hover">Thanh Toán</a> </div>
+                <div class="col-12 d-flex shopping-box"><a href="../account/login.jsp" onclick="showAlert()" class="ml-auto btn hvr-hover">/createOrder</a> </div>
                 <script>
                     function showAlert() {
-                        alert("Bạn cần đăng nhập trước khi thanh toán!");
+                        alert("Bạn cần đăng nhập trước khi /createOrder!");
                     }
                 </script>
                 <%}

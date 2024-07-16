@@ -227,6 +227,31 @@ public class AddressDAO {
 
         return isSuccess;
     }
+    public Address getSelectedAddressByUserId(int userId) {
+        Address selectedAddress = null;
+        query = "SELECT id, user_id, first_name, last_name, address, method_payment, email, contact, isSelect FROM address WHERE user_id = ? AND isSelect = 1";
+        try {
+            ps = con.prepareStatement(query);
+            ps.setInt(1, userId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                selectedAddress = new Address();
+                selectedAddress.setId(rs.getInt(1));
+                selectedAddress.setUserId(rs.getInt(2));
+                selectedAddress.setFirstName(rs.getString(3));
+                selectedAddress.setLastName(rs.getString(4));
+                selectedAddress.setAddress(rs.getString(5));
+                selectedAddress.setPaymentMethod(rs.getString(6));
+                selectedAddress.setEmail(rs.getString(7));
+                selectedAddress.setContact(rs.getString(8));
+                selectedAddress.setIsSelect(rs.getInt(9));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return selectedAddress;
+    }
+
 
 
     public static void main(String[] args) {

@@ -1,9 +1,7 @@
 package controller;
 
 import cart.CartProduct;
-import dao.OrderDAO;
-import dao.OrderDetailDAO;
-import dao.ProductDAO;
+import dao.*;
 import database.DBConnect;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,9 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Order;
-import model.OrderDetail;
-import model.Product;
+import model.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +22,9 @@ public class BuyProduct extends HttpServlet {
         int orderId = Integer.parseInt(req.getParameter("order_id"));
         HttpSession session = req.getSession();
         OrderDAO dao = new OrderDAO(DBConnect.getConnection());
+        LogDAO logDAO = new LogDAO(DBConnect.getConnection());
+        User user = (User) session.getAttribute("success");
+        String ip = IPAddressUtil.getPublicIPAddress();
         OrderDetailDAO orderDetailDAO = new OrderDetailDAO(DBConnect.getConnection());
         ProductDAO productDAO = new ProductDAO(DBConnect.getConnection());
         CartProduct cartProduct = (CartProduct) session.getAttribute("cart");
@@ -38,10 +37,12 @@ public class BuyProduct extends HttpServlet {
         }
         if(isUpdate) {
             updateStatusProduct = dao.updateStatus(orderId);
+            dao.updateShipStatus(orderId);
             cartProduct.getData().clear();
             session.setAttribute("cart",cartProduct);
             session.setAttribute("createOrder",null);
             session.setAttribute("buyProductMessage","Đơn hàng đã được đặt thành công");
+            logDAO.insertLog(new Log(Log.ALERT, user.getId(),ip,"Mua Hàng","Mua hàng thành công ",0));
             resp.sendRedirect("index.jsp");
         } else {
             session.setAttribute("buyProductMessage","Hệ thống đang gap lỗi");

@@ -49,7 +49,11 @@ public class CartProduct {
     public double totalPriceAllProduct() {
         double total = 0.0;
         for(Map.Entry<Integer, Cart> entry: data.entrySet()) {
-            total += entry.getValue().getQuantity() * Double.parseDouble(entry.getValue().getProduct().getPrice());
+            Product product = entry.getValue().getProduct();
+            double price = Double.parseDouble(product.getPrice());
+            double discount = product.getDiscount();
+            double discountedPrice = price - (price * discount / 100);
+            total += entry.getValue().getQuantity() * discountedPrice;
         }
         return total;
     }

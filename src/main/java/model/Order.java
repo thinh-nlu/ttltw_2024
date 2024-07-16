@@ -10,6 +10,8 @@ public class Order {
     private Timestamp orderDate;
     private String orderStatus;
 
+    private int addressId;
+
     public Order() {}
 
     public Order(int id, int userId, String invoiceNumber, String amountDue, Timestamp orderDate, String orderStatus) {
@@ -27,6 +29,23 @@ public class Order {
         this.amountDue = amountDue;
         this.orderDate = orderDate;
         this.orderStatus = orderStatus;
+    }
+
+    public Order(int userId, String invoiceNumber, String amountDue, Timestamp orderDate, String orderStatus, int addressId) {
+        this.userId = userId;
+        this.invoiceNumber = invoiceNumber;
+        this.amountDue = amountDue;
+        this.orderDate = orderDate;
+        this.orderStatus = orderStatus;
+        this.addressId = addressId;
+    }
+
+    public int getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(int addressId) {
+        this.addressId = addressId;
     }
 
     public int getId() {

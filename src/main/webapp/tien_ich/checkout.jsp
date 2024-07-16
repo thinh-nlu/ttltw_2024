@@ -7,17 +7,20 @@
 <%@ page import="database.DBConnect" %>
 <%@ page import="dao.ProductDAO" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="dao.AddressDAO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
     CartProduct cartProduct = (CartProduct) session.getAttribute("cart");
-    if(cartProduct == null) cartProduct = new CartProduct();
+    if (cartProduct == null) cartProduct = new CartProduct();
     OrderDetailDAO dao = new OrderDetailDAO(DBConnect.getConnection());
     ProductDAO productDAO = new ProductDAO(DBConnect.getConnection());
-    User user = (User) session.getAttribute("success");
+    AddressDAO addressDAO = new AddressDAO(DBConnect.getConnection());
     Order order = (Order) session.getAttribute("createOrder");
-    List<OrderDetail> orderDetails = new ArrayList<>();
+    User user = (User) session.getAttribute("success");
     String messageBuyProduct = (String) session.getAttribute("buyProductMessage");
+    List<OrderDetail> orderDetails = new ArrayList<>();
+
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,11 +78,11 @@
                 <div class="login-register">
                     <ul>
                         <% if (user != null) { %>
-                        <% if (!user.getIsAdmin().equals("0")&&!user.getIsAdmin().equals("3")) { %>
+                        <% if (!user.getIsAdmin().equals("0") && !user.getIsAdmin().equals("3")) { %>
                         <li><a href="../tien_ich/my-account.jsp">Xin chào <%=user.getName()%></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a></li>
-                        <%}else{%>
-                        <li><p>Xin chào <%= user.getName() %></p></li>
+                        <%} else {%>
+                        <li><p>Xin chào <%=user.getName()%></p></li>
                         <li><a href="../admin/admin.jsp">Trang Quản Lí</a></li>
                         <li><a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a></li>
                         <%}%>
@@ -114,9 +117,12 @@
         window.location.href = "../gallery.jsp";
     </script>
     <%
-        }else{
-         orderDetails = dao.getDetailOfOrder(order.getId());
+    }else{
+        orderDetails = dao.getDetailOfOrder(order.getId());
+        Address address = addressDAO.getAddressById(order.getAddressId());
     %>
+
+
     <!-- Start Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-default bootsnav">
         <div class="container">
@@ -163,7 +169,7 @@
                 <ul>
                     <li class="side-menu"><a href="cart.jsp">
                         <i class="fa fa-shopping-bag"></i>
-                        <span class="badge"><%=cartProduct.getTotal()%></span>
+                        <span class="badge">1</span>
                         <p>Giỏ Hàng</p>
                     </a></li>
                 </ul>
@@ -171,32 +177,7 @@
             <!-- End Atribute Navigation -->
         </div>
         <!-- Start Side Menu -->
-        <div class="side">
-            <a href="#" class="close-side"><i class="fa fa-times"></i></a>
-            <li class="cart-box">
-                <ul class="cart-list">
-                    <li>
-                        <a href="#" class="photo"><img src="../images/img-pro-01.jpg" class="cart-thumb" alt="" /></a>
-                        <h6><a href="#">Delica omtantur </a></h6>
-                        <p>1x - <span class="price">$80.00</span></p>
-                    </li>
-                    <li>
-                        <a href="#" class="photo"><img src="../images/img-pro-02.jpg" class="cart-thumb" alt="" /></a>
-                        <h6><a href="#">Omnes ocurreret</a></h6>
-                        <p>1x - <span class="price">$60.00</span></p>
-                    </li>
-                    <li>
-                        <a href="#" class="photo"><img src="../images/img-pro-03.jpg" class="cart-thumb" alt="" /></a>
-                        <h6><a href="#">Agam facilisis</a></h6>
-                        <p>1x - <span class="price">$40.00</span></p>
-                    </li>
-                    <li class="total">
-                        <a href="#" class="btn btn-default hvr-hover btn-cart">VIEW CART</a>
-                        <span class="float-right"><strong>Total</strong>: $180.00</span>
-                    </li>
-                </ul>
-            </li>
-        </div>
+
         <!-- End Side Menu -->
     </nav>
     <!-- End Navigation -->
@@ -233,61 +214,139 @@
 
 <!-- Start Cart  -->
 <div class="cart-box-main">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-6 col-lg-6 mb-3">
-                <div class="row">
-                    <div class="col-md-12 col-lg-12">
-                    </div>
-                    <div class="col-md-12 col-lg-12">
-                        <div class="order-box">
-                            <div class="title-left">
-                                <h3>Đơn hàng của bạn</h3>
-                                <h4>Số hóa đơn: <%=order.getInvoiceNumber()%></h4>
-                            </div>
-                            <div class="rounded p-2 bg-light">
-                                <%
-                                    for (OrderDetail o: orderDetails) {
-                                        Product p = productDAO.getProductById(o.getProductId());
-                                %>
-                                <div class="media mb-2 border-bottom">
-                                    <div class="media-body"> <%=p.getTitle()%>
-                                            <div class="small text-muted"><%=p.getPrice()%><span class="mx-2">|</span><%=o.getQuantity()%> <span class="mx-2">|</span><%=String.valueOf(Double.parseDouble(p.getPrice()) * o.getQuantity())%></div>
+    <div class="container-fluid">
+
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center py-3">
+                <h2 class="h5 mb-0"><a href="#" class="text-muted"></a> Hóa đơn #<%=order.getInvoiceNumber()%></h2>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Details -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="mb-3 d-flex justify-content-between">
+                                <div>
+                                    <span class="me-3">Ngày: <%=order.getOrderDate()%></span>
+                                    <span class="me-3"> #<%=order.getInvoiceNumber()%></span>
+                                </div>
+                                <div class="d-flex">
+                                    <button class="btn btn-link p-0 me-3 d-none d-lg-block btn-icon-text"><i class="bi bi-download"></i> <span class="text">Invoice</span></button>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link p-0 text-muted" type="button" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#"><i class="bi bi-pencil"></i> Edit</a></li>
+                                            <li><a class="dropdown-item" href="#"><i class="bi bi-printer"></i> Print</a></li>
+                                        </ul>
                                     </div>
                                 </div>
+                            </div>
+                            <table class="table table-borderless">
+                                <tbody>
+
+                                <tr>
+                                    <td>
+                                        <div class="d-flex mb-2">
+                                            <div class="flex-shrink-0">
+                                                <h3>Sản phẩm</h3>
+                                            </div>
+                                            <div class="flex-lg-grow-1 ms-3">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Số lượng</td>
+                                    <td class="text-end">Thành tiền</td>
+
+                                    <%
+                                        Product p = null;
+                                        for (OrderDetail o : orderDetails) {
+                                            p = productDAO.getProductById(o.getProductId());
+                                    %>
+
+
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex mb-2">
+                                            <div class="flex-shrink-0">
+                                                <img src="../DataWeb/<%=p.getImage()%>" alt="" width="60" class="img-fluid">
+                                            </div>
+                                            <div class="flex-lg-grow-1 ms-3">
+                                                <h3 class="mb-0"><a  href="${pageContext.request.contextPath }/product-detail?id=<%= p.getId() %>" class="text-reset">   <%=p.getTitle()%>  <%=p.getUnitPrice()%><%=p.getUnit().equalsIgnoreCase("g")? "00":""%><%=p.getUnit()%></a></h3>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><%=o.getQuantity()%></td>
+                                    <td class="text-end">
+                                        <%=String.valueOf(Double.parseDouble(p.getPrice()) * o.getQuantity())%></td>
+                                </tr>
                                 <%
                                     }
                                 %>
-                            </div>
-                            <%
-                                double totalPrice = cartProduct.totalPriceAllProduct();
-                                double percent = 5.0;
-                                double tax = (totalPrice / 100) * percent;
-                            %>
-                            <div class="d-flex">
-                                <div class="ml-auto font-weight-bold">Tổng tiền</div>
-                            </div>
-                            <hr class="my-1">
-                            <div class="d-flex">
-                                <h4>Tổng</h4>
-                                <div class="ml-auto font-weight-bold"> <%= totalPrice + "đ"%> </div>
-                            </div>
-                            <div class="d-flex">
-                                <h4>Thuế</h4>
-                                <div class="ml-auto font-weight-bold"> <%= tax+"đ"%> </div>
-                            </div>
-                            <div class="d-flex gr-total">
-                                <h5>Tổng tền thanh toán</h5>
-                                <div class="ml-auto h5"> <%=totalPrice + tax  + "đ"%> </div>
-                            </div>
-                            <hr> </div>
+                                </tbody>
+                                <%
+                                    double totalPrice = cartProduct.totalPriceAllProduct();
+                                    double percent = 5.0;
+                                    double tax = (totalPrice / 100) * percent;
+                                    double shippingFee = 30000;
+                                %>
+                                <tfoot>
+                                <tr>
+                                    <td colspan="2">Tổng Tiền</td>
+                                    <td class="text-end"><%=totalPrice + "đ"%></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Thuế</td>
+                                    <td class="text-end"><%=tax + "đ"%></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Phí vận chuyển</td>
+                                    <td class="text-danger text-end"><%=shippingFee + "đ"%></td>
+                                </tr>
+                                <tr class="fw-bold">
+                                    <td colspan="2">Thanh toán</td>
+                                    <td class="text-end"><%=totalPrice + tax + shippingFee + "đ"%></td>
+                                </tr>
+                                <tr class="fw-bold">
+                                    <td class="text-end">
+                                        <div class="col-12 d-flex shopping-box"><a href="../buy_product?order_id=<%=order.getId()%>" class="ml-auto btn hvr-hover">Hoàn tất thanh toán</a> </div>
+                                    </td>
+                                </tr>
+
+
+                                </tfoot>
+
+                            </table>
+                        </div>
                     </div>
-                    <div class="col-12 d-flex shopping-box"> <a href="../buy_product?order_id=<%=order.getId()%>" class="ml-auto btn hvr-hover">Thanh toán</a> </div>
+                    <!-- Payment -->
+
+                </div>
+                <div class="col-lg-4">
+                    <div class="card mb-4">
+                        <div class="card-body ">
+                            <h3 class="h3">Thông Tin Giao Hàng</h3>
+                            <hr>
+                            <h3 class="h6">Địa chỉ</h3>
+                            <button class="btn btn-link p-0 me-3 d-none d-lg-block btn-icon-text"><a href="List-address.jsp"><i class="bi bi-pencil"></i> <span class="text">Thay đổi địa chỉ</span></a></button>
+                            <address>
+                                <strong><%=address.getFirstName()%> <%=address.getLastName()%></strong><br>
+                                <%=address.getAddress()%><br>
+                                <abbr title="SĐT"></abbr>SĐT: <%=address.getContact()%>
+                            </address>
+                            <h3 class="h6">Phương thức thanh toán</h3>
+                            <p><%=address.getPaymentMethod()%> <br>
+                                Tổng tiền cần thanh toán: <%=totalPrice + tax + shippingFee + "đ"%> <span class="badge bg-success rounded-pill text-light"><%=order.getOrderStatus()%></span></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <%}%>
     </div>
+    <%}%>
 </div>
 <!-- End Cart -->
 
