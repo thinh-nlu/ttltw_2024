@@ -57,7 +57,7 @@ public class OrderDAO {
 
     public Order getOrderByInvoiceNumber(String invoiceNumber) {
         Order o = null;
-        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status, address_id FROM orders WHERE invoice_number = ?";
+        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status, address_id, order_shipping_status FROM orders WHERE invoice_number = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setString(1, invoiceNumber);
@@ -71,6 +71,7 @@ public class OrderDAO {
                 o.setOrderDate(rs.getTimestamp("order_date"));
                 o.setOrderStatus(rs.getString("order_status"));
                 o.setAddressId(rs.getInt("address_id"));
+                o.setAddressShipStatus(rs.getString("order_shipping_status"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -135,7 +136,7 @@ public class OrderDAO {
     public List<Order> getListOrderByUser(int userId) {
         List<Order> list = new ArrayList<>();
         Order o;
-        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status, address_id FROM orders WHERE user_id = ?";
+        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status, address_id, order_shipping_status FROM orders WHERE user_id = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setInt(1, userId);
@@ -149,6 +150,7 @@ public class OrderDAO {
                 o.setOrderDate(rs.getTimestamp("order_date"));
                 o.setOrderStatus(rs.getString("order_status"));
                 o.setAddressId(rs.getInt("address_id"));
+                o.setAddressShipStatus(rs.getString("order_shipping_status"));
                 list.add(o);
             }
         } catch (SQLException e) {
@@ -160,7 +162,7 @@ public class OrderDAO {
     public List<Order> getAllOrder() {
         List<Order> list = new ArrayList<>();
         Order o;
-        query = "select id, user_id, invoice_number, amount_due, order_date, order_status, address_id from orders";
+        query = "select id, user_id, invoice_number, amount_due, order_date, order_status, address_id,order_shipping_status from orders";
         try {
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
@@ -173,6 +175,7 @@ public class OrderDAO {
                 o.setOrderDate(rs.getTimestamp(5));
                 o.setOrderStatus(rs.getString(6));
                 o.setAddressId(rs.getInt(7));
+                o.setAddressShipStatus(rs.getString(8));
                 list.add(o);
             }
         } catch (SQLException e) {
@@ -208,6 +211,24 @@ public class OrderDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void CancleOder(int orderId, String status) {
+        try {
+            String query = "UPDATE orders SET order_shipping_status = ? WHERE id = ?";
+            PreparedStatement pstmt = this.con.prepareStatement(query);
+            pstmt.setString(1, status);
+            pstmt.setInt(2, orderId);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        OrderDAO orderDAO = new OrderDAO(DBConnect.getConnection());
+
+
     }
 
 }

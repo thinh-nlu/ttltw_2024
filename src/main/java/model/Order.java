@@ -12,6 +12,8 @@ public class Order {
 
     private int addressId;
 
+    private  String addressShipStatus;
+
     public Order() {}
 
     public Order(int id, int userId, String invoiceNumber, String amountDue, Timestamp orderDate, String orderStatus) {
@@ -38,6 +40,14 @@ public class Order {
         this.orderDate = orderDate;
         this.orderStatus = orderStatus;
         this.addressId = addressId;
+    }
+
+    public String getAddressShipStatus() {
+        return addressShipStatus;
+    }
+
+    public void setAddressShipStatus(String addressShipStatus) {
+        this.addressShipStatus = addressShipStatus;
     }
 
     public int getAddressId() {

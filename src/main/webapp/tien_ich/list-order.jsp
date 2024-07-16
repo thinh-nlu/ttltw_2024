@@ -5,6 +5,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="dao.OrderDAO" %>
 <%@ page import="database.DBConnect" %>
+<%@ page import="dao.AddressDAO" %>
+<%@ page import="model.Address" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
@@ -14,6 +16,10 @@
     List<Order> orderList = new ArrayList<>();
     OrderDAO dao = new OrderDAO(DBConnect.getConnection());
     if(user!=null) orderList = dao.getListOrderByUser(user.getId());
+
+    AddressDAO addressDAO = new AddressDAO(DBConnect.getConnection());
+
+
 %>
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
@@ -197,7 +203,10 @@
             <th>Hoá đơn</th>
             <th>Thời gian</th>
             <th>Trạng thái</th>
+            <th>Thanh toán</th>
+            <th>Địa chỉ</th>
             <th>Chi tiết</th>
+            <th></th>
         </tr>
         </thead>
         <tbody class="bg-light text-dark">
@@ -206,15 +215,23 @@
         %>
         <%for(Order o: orderList) {
             count ++;
+            Address a = addressDAO.getAddressById(o.getAddressId());
         %>
         <tr class='text-center text-dark font-weight-normal  '>
             <td><%=count%></td>
             <td><%=o.getAmountDue() + "VND"%></td>
             <td><%=o.getInvoiceNumber()%></td>
             <td><%=o.getOrderDate()%></td>
-            <td><%=o.getOrderStatus().equals("complete") ? "Đã thanh toán" : "Đang chờ xử lý"%></td>
+            <td><%=o.getAddressShipStatus()%></td>
+            <td><%=o.getOrderStatus()%></td>
+            <td><%=a.getAddress()%></td>
             <td><a href="../orderDetail?orderId=<%=o.getId()%>" class='text-dark'><i class="bi bi-arrow-right-circle"></i></a></td>
-        <%
+            <td>
+                <% if (o.getOrderStatus().equals("Đã thanh toán") && o.getAddressShipStatus().equals("Chờ xác nhận")) { %>
+                <a href="../CancleOrder?orderId=<%=o.getId()%>">  <button class="btn btn-danger cancel-order">Huỷ đơn</button></a>
+                <% } %>
+            </td>
+            <%
         }%>
         </tr>
         </tbody>
@@ -234,6 +251,17 @@
 <a href="#" id="back-to-top" title="Back to top" style="display: none;"><i class="bi-arrow-up-short"></i></a>
 
 <!-- ALL JS FILES -->
+<%--<script>--%>
+<%--    $(document).ready(function() {--%>
+<%--        $(document).on('click', '.cancel-order', function() {--%>
+<%--            console.log('Cancel order button clicked');  // Debugging line--%>
+<%--            var orderId = $(this).data('order-id');--%>
+<%--            if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {--%>
+<%--                window.location.href = '${pageContext.request.contextPath}/CancleOrder' + orderId;--%>
+<%--            }--%>
+<%--        });--%>
+<%--    });--%>
+<%--</script>--%>
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/popper.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
