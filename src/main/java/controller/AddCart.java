@@ -35,6 +35,6 @@ public class AddCart extends HttpServlet {
         cart.add(id);
         logDAO.insertLog(new Log(Log.INFO, user.getId(),ip,"Mua hàng","Thêm sản phẩm +"+" "+p.getTitle()+" "+"vào giỏ hàng",0));
         session.setAttribute("cart",cart);
-        resp.sendRedirect("tien_ich/cart.jsp");
+        resp.sendRedirect("gallery.jsp");
     }
 }

@@ -82,7 +82,7 @@ public class OrderDAO {
 
     public Order getOrderById(int id) {
         Order o = null;
-        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status FROM orders WHERE id = ?";
+        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status, order_shipping_status FROM orders WHERE id = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setInt(1, id);
@@ -95,6 +95,7 @@ public class OrderDAO {
                 o.setAmountDue(rs.getString("amount_due"));
                 o.setOrderDate(rs.getTimestamp("order_date"));
                 o.setOrderStatus(rs.getString("order_status"));
+                o.setAddressShipStatus(rs.getString("order_shipping_status"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -214,6 +215,17 @@ public class OrderDAO {
     }
 
     public void CancleOder(int orderId, String status) {
+        try {
+            String query = "UPDATE orders SET order_shipping_status = ? WHERE id = ?";
+            PreparedStatement pstmt = this.con.prepareStatement(query);
+            pstmt.setString(1, status);
+            pstmt.setInt(2, orderId);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void ChangeShippingStatus(int orderId, String status) {
         try {
             String query = "UPDATE orders SET order_shipping_status = ? WHERE id = ?";
             PreparedStatement pstmt = this.con.prepareStatement(query);

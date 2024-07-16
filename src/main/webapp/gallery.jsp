@@ -77,6 +77,7 @@
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <![endif]-->
 </head>
 <body>
@@ -414,7 +415,7 @@
                                     <li><a href="${pageContext.request.contextPath}/add_wishlist?productId=<%= p.getId() %>" data-toggle="tooltip" data-placement="right" title="Thêm vào danh sách yêu thích"><i class="far fa-heart"></i></a></li>
                                 </ul>
                                 <%if (Integer.parseInt(p.getQuantity()) > 0) { %>
-                                <a class="cart" href="${pageContext.request.contextPath}/add_cart?id=<%= p.getId() %>">Thêm  giỏ hàng</a>
+                                <a class="cart" href="${pageContext.request.contextPath}/add_cart?id=<%= p.getId() %>" onclick="showSuccessAlert()">Thêm vào giỏ hàng</a>
                                 <%}else{%>
                                 <h2 class="text-danger"> Đã Hết Hàng </h2>
                                 <%}%>
@@ -445,12 +446,6 @@
                                 <% } %>
                             </h5>
                         </div>
-
-
-
-
-
-
 
                     </div>
                 </div>
@@ -659,6 +654,18 @@
     <a href="#" id="back-to-top" title="Back to top" style="display: none;"><i class="bi-arrow-up-short"></i></a>
 
     <!-- ALL JS FILES -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function showSuccessAlert() {
+        Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Thêm vào giỏ hàng thành công",
+            showConfirmButton: false,
+            timer: 5000
+        });
+    }
+</script>
     <script src="js/jquery-3.2.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
