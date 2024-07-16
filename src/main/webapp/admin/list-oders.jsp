@@ -1,349 +1,413 @@
 <%@ page import="model.User" %>
+<%@ page import="dao.ProductDAO" %>
+<%@ page import="database.DBConnect" %>
+<%@ page import="dao.OrderDAO" %>
+<%@ page import="dao.UserDAO" %>
+<%@ page import="model.Product" %>
+<%@ page import="java.util.List" %>
+<%@ page import="model.Log" %>
+<%@ page import="dao.LogDAO" %>
 <%@ page import="cart.CartProduct" %>
 <%@ page import="model.Order" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.List" %>
-<%@ page import="dao.OrderDAO" %>
-<%@ page import="database.DBConnect" %>
-<%@ page import="dao.UserDAO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
-  CartProduct cartProduct = (CartProduct) session.getAttribute("cart");
-  if(cartProduct == null) cartProduct = new CartProduct();
-  User user = (User) session.getAttribute("success");
-  List<Order> orderList = new ArrayList<>();
-  OrderDAO dao = new OrderDAO(DBConnect.getConnection());
-  UserDAO userDAO = new UserDAO(DBConnect.getConnection());
-  if(user!=null) orderList = dao.getAllOrder();
+    CartProduct cartProduct = (CartProduct) session.getAttribute("cart");
+    if(cartProduct == null) cartProduct = new CartProduct();
+    User user = (User) session.getAttribute("success");
+    List<Order> orderList = new ArrayList<>();
+    OrderDAO dao = new OrderDAO(DBConnect.getConnection());
+    UserDAO userDAO = new UserDAO(DBConnect.getConnection());
+    if(user!=null) orderList = dao.getAllOrder();
 
 %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nông Lâm Xanh</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="../css/all.css">
+
+    <link rel="stylesheet" href="../css/all.min.css">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="../css/OverlayScrollbars.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../css/adminlte.min.css">
+    <link rel="stylesheet" href="../asset/bootstrap-icons-1.11.1/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.0.5/js/dataTables.js"></script>
+    <link href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</head>
 <style>
-  .form-check {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    .form-check {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-  .form-check-input {
-    margin: 0;
-  }
+    .form-check-input {
+        margin: 0;
+        width: 18px;
+        height: 18px;
+    }
 
-  #delete-orders {
-    margin-left: 10px;
-  }
+    #delete-orders {
+        margin-left: 10px;
+    }
 
-  .hoverable:hover {
-    background-color: #f1f1f1;
-    cursor: pointer;
-  }
+    .hoverable:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
 
-  .table td, .table th {
-    vertical-align: middle;
-    text-align: center;
-  }
+    .table td, .table th {
+        vertical-align: middle;
+        text-align: center;
+        padding: 10px;
+    }
 
-  .form-check-input {
-    width: 18px;
-    height: 18px;
-  }
+    .d-flex {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 0 10px;
+        width: 100%;
+        gap: 10px;
+    }
 
+    #delete-orders {
+        white-space: nowrap;
+    }
 
-  .table thead th, .table tbody td {
-    padding: 10px;
-    text-align: center;
-  }
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #fff;
+    }
 
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        color: #fff;
+    }
 
-  #delete-orders {
-    white-space: nowrap;
-  }
-
+    .form-check-input {
+        width: 18px;
+        height: 18px;
+        margin-left: auto;
+    }
 
 </style>
+<body class="hold-transition lightblue-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
 
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <!-- Mobile Metas -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            </li>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="../index.jsp" class="nav-link">Trang chủ</a>
+            </li>
 
-  <!-- Site Metas -->
-  <title>NongLamXanh</title>
-  <meta name="keywords" content="">
-  <meta name="description" content="">
-  <meta name="author" content="">
-
-  <!-- Site Icons -->
-  <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon">
-  <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
-
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="../css/bootstrap.min.css">
-  <!-- Site CSS -->
-  <link rel="stylesheet" href="../css/style.css">
-  <!-- Responsive CSS -->
-  <link rel="stylesheet" href="../css/responsive.css">
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="../css/custom.css">
-  <link rel="stylesheet" href="../asset/bootstrap-icons-1.11.1/bootstrap-icons.css">
-</head>
-<body>
-<!-- Start Main Top -->
-<div class="main-top">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <div class="our-link">
-          <ul>
-            <li><a href="../tien_ich/my-account.jsp"><i class="fa fa-user s_color"></i> Tài khoản của tôi</a></li>
-            <li><a href="../contact-us.jsp"><i class="fas fa-headset"></i> Liên hệ </a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <div class="login-register">
-          <ul>
-            <% if (user != null) { %>
-            <% if (!user.getIsAdmin().equals("0")) { %>
-            <li><a href="../tien_ich/my-account.jsp">Xin chào <%=user.getName()%></a></li>
-            <li><a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a></li>
-            <%} else {%>
-            <li><p>Xin chào <%= user.getName() %></p></li>
-            <li><a href="../admin/admin.jsp">Trang Quản Lí</a></li>
-            <li><a href="${pageContext.request.contextPath}/logout">Đăng Xuất</a></li>
-            <%}%>
-            <% } else { %>
-            <li><a href="../account/registration.jsp">Đăng Kí</a></li>
-            <li><a href="../account/login.jsp">Đăng Nhập</a></li>
-            <% } %>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End Main Top -->
-
-<!-- Start Main Top -->
-<header class="main-header">
-  <!-- Start Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-default bootsnav">
-    <div class="container">
-      <!-- Start Header Navigation -->
-      <div class="navbar-header">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
-          <i class="fa fa-bars"></i>
-        </button>
-        <a class="navbar-brand" href="../index.jsp"><img src="../images/logo1.png" class="logo" style="width: 200px;height: 108px" alt=""></a>
-      </div>
-      <!-- End Header Navigation -->
-
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="navbar-menu">
-        <ul class="nav navbar-nav ml-auto" data-in="fadeInDown" data-out="fadeOutUp">
-          <li class="nav-item"><a class="nav-link" href="../index.jsp">Trang Chủ</a></li>
-          <li class="nav-item"><a class="nav-link" href="../about.jsp">Giới Thiệu</a></li>
-          <li class="dropdown active">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tiện ích <i class="bi bi-list "></i></a>
-            <ul class="dropdown-menu">
-              <li><a href="cart.jsp">Giỏ Hàng</a></li>
-              <li><a href="address.jsp">Địa chỉ</a></li>
-              <li><a href="checkout.jsp">Thanh toán</a></li>
-              <li><a href="my-account.jsp">Tài Khoản</a></li>
-              <li><a href="wishlist.jsp">Yêu thích</a></li>
-            </ul>
-          </li>
-          <li class="nav-item"><a class="nav-link" href="../gallery.jsp">Cửa Hàng</a></li>
-          <li class="nav-item"><a class="nav-link" href="../contact-us.jsp">Liên hệ </a></li>
         </ul>
-        <li class="nav-item">
-          <form method="post" action="../searchProduct">
-            <div class="input-group rounded">
-              <input type="search" class="form-control rounded" placeholder="Tìm kiếm sản phẩm" aria-label="Search" aria-describedby="search-addon" id="keyword" name="keyword">
-              <input type="submit" value="Tìm kiếm" class="btn btn-outline-success" name="search_data_product">
+
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
+            <!-- Navbar Search -->
+            <li class="nav-item">
+                <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+                    <i class="fas fa-search"></i>
+                </a>
+                <div class="navbar-search-block">
+                    <form class="form-inline">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control form-control-navbar" type="search" placeholder="Tìm kiếm" aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-navbar" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-comments"></i>
+                    <span class="badge badge-danger navbar-badge">3</span>
+                </a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-bell"></i>
+                    <span class="badge badge-warning navbar-badge">15</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </a>
+            </li>
+
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="${pageContext.request.contextPath}/logout" class="nav-link">Đăng Xuất</a>
+            </li>
+        </ul>
+    </nav>
+
+
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+
+        <div class="sidebar">
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image">
+                    <img src="https://secure.gravatar.com/avatar/02dce7358deff589577dfc8a60342636?s=256&d=mm&r=g" class="img-circle elevation-2" alt="User Image">
+                </div>
+                <div class="info">
+                    <a href="#" class="d-block"><%= user.getName()%></a>
+                </div>
+
+
             </div>
-          </form>
 
-        </li>
-      </div>
-      <!-- /.navbar-collapse -->
 
-      <!-- Start Atribute Navigation -->
-      <div class="attr-nav">
-        <ul>
-          <li class="side-menu"><a href="cart.jsp">
-            <i class="fa fa-shopping-bag"></i>
-            <span class="badge"><%=cartProduct.getTotal()%></span>
-            <p>Giỏ hàng</p>
-          </a></li>
-        </ul>
-      </div>
-      <!-- End Atribute Navigation -->
-    </div>
-    <!-- Start Side Menu -->
-    <div class="side">
-      <a href="#" class="close-side"><i class="fa fa-times"></i></a>
-      <li class="cart-box">
-        <ul class="cart-list">
-          <li>
-            <a href="#" class="photo"><img src="../images/img-pro-01.jpg" class="cart-thumb" alt="" /></a>
-            <h6><a href="#">Delica omtantur </a></h6>
-            <p>1x - <span class="price">$80.00</span></p>
-          </li>
-          <li>
-            <a href="#" class="photo"><img src="../images/img-pro-02.jpg" class="cart-thumb" alt="" /></a>
-            <h6><a href="#">Omnes ocurreret</a></h6>
-            <p>1x - <span class="price">$60.00</span></p>
-          </li>
-          <li>
-            <a href="#" class="photo"><img src="../images/img-pro-03.jpg" class="cart-thumb" alt="" /></a>
-            <h6><a href="#">Agam facilisis</a></h6>
-            <p>1x - <span class="price">$40.00</span></p>
-          </li>
-          <li class="total">
-            <a href="#" class="btn btn-default hvr-hover btn-cart">VIEW CART</a>
-            <span class="float-right"><strong>Total</strong>: $180.00</span>
-          </li>
-        </ul>
-      </li>
-    </div>
-    <!-- End Side Menu -->
-  </nav>
-  <!-- End Navigation -->
-</header>
-<!-- End Main Top -->
 
-<!-- Start Top Search -->
-<div class="top-search">
-  <div class="container">
-    <div class="input-group">
-      <span class="input-group-addon"><i class="fa fa-search"></i></span>
-      <input type="text" class="form-control" placeholder="Search">
-      <span class="input-group-addon close-search"><i class="fa fa-times"></i></span>
-    </div>
-  </div>
-</div>
-<!-- End Top Search -->
 
-<div class="px-lg-5 pt-xl-5">
-  <h3 class="text-center text-dark pb-3 display-4 font-weight-normal" >Tất cả đơn hàng</h3>
-  <%
-    if(orderList.isEmpty()) {
-  %>
-  <h2 class="text-center text-danger">Không có đơn hàng nào</h2>
-  <%}else{%>
-  <table class="table table-striped text-center  ">
-    <thead class="bg-dark">
-    <tr class="text-light">
-      <th>STT</th>
-      <th>Tên Khách Hàng</th>
-      <th>Tổng tiền</th>
-      <th>Hoá đơn</th>
-      <th>Thời gian</th>
-      <th>Trạng thái</th>
-      <th>Chi tiết</th>
-      <th>
-        <button id="select-all" class="btn btn-primary btn-sm ml-2">Chọn tất cả</button>
-        <button id="delete-orders" class="btn btn-danger btn-sm ml-2">Xóa</button>
-      </th>
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                    data-accordion="false">
+                    <li class="nav-header"></li>
+                    <li class="nav-item">
+                        <a href="insert-product.jsp" class="nav-link">
+                            <i class="bi bi-plus-square"></i>
+                            <p>
+                                Thêm sản phẩm
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="list-products.jsp" class="nav-link">
+                            <i class="bi bi-box-seam"></i>
+                            <p>Quản lí sản phẩm </p>
+                        </a>
+                    </li>
 
-    </tr>
-    </thead>
-    <tbody class="bg-light text-dark">
+                    <li class="nav-item">
+                        <a href="list-user.jsp" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Quản lí người dùng</p>
+                        </a>
+                    </li>
 
-    <%for(Order o: orderList) {
-    %>
+                    <li class="nav-item">
+                        <a href="list-oders.jsp" class="nav-link">
+                            <i class="bi bi-basket"></i>
+                            <p>Quản lí đơn hàng</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Giám sát đơn hàng</p>
+                        </a>
+                    </li>
 
-    <tr class='text-center text-dark font-weight-normal  '>
-      <td><%= o.getId() %></td>
-      <td class="hoverable"><%= (userDAO.getUserById(o.getUserId()) != null) ? userDAO.getUserById(o.getUserId()).getName() : "Không xác định" %></td>
-      <td class="hoverable"><%= o.getAmountDue() + " VND" %></td>
-      <td class="hoverable"><%= o.getInvoiceNumber() %></td>
-      <td class="hoverable"><%= o.getOrderDate() %></td>
-      <td class="hoverable"><%= o.getOrderStatus().equals("complete") ? "Đã thanh toán" : "Đang chờ xử lý" %></td>
-      <td class="hoverable"><a href="../orderDetail?orderId=<%= o.getId() %>" class='text-dark'><i class="bi bi-arrow-right-circle"></i></a></td>
-      <td>
-        <div class="form-check">
-          <input class="form-check-input order-checkbox" type="checkbox" name="orderCheckbox" value="<%= o.getId() %>" id="order<%= o.getId() %>">
+                    <%-- Kiểm tra và ẩn menu nếu isAdmin là 3 --%>
+                    <%   String isAdmin = user.getIsAdmin();
+                        if (!isAdmin.equals("3")) { %>
+
+
+
+
+                    <li class="nav-item">
+                        <a href="edit_role.jsp" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Quản lí quyền hạng</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="list-employee.jsp" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Quản lí nhân viên</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="list-log.jsp" class="nav-link">
+                            <i class="bi bi-clipboard2-data-fill"></i>
+                            <p>Quản Lí Log</p>
+                        </a>
+                    </li>
+                    <% } %>
+
+                    <li class="nav-item">
+                        <a href="list_discount.jsp" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Khuyến mãi sản phẩm</p>
+                        </a>
+                    </li>
+
+
+                </ul>
+            </nav>
         </div>
-      </td>
-      <%
-        }%>
-    </tr>
-    </tbody>
-  </table>
+    </aside>
 
-  <%
-    }
-  %>
+
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">TRANG QUẢN LÍ</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <h3 class="text-center text-dark pb-3 display-4 font-weight-normal" >Tất cả đơn hàng</h3>
+            <%
+                if(orderList.isEmpty()) {
+            %>
+            <h2 class="text-center text-danger">Không có đơn hàng nào</h2>
+            <%}else{%>
+            <table class="table table-striped text-center  ">
+                <thead class="bg-dark">
+                <tr class="text-light">
+                    <th>STT</th>
+                    <th>Tên Khách Hàng</th>
+                    <th>Tổng tiền</th>
+                    <th>Hoá đơn</th>
+                    <th>Thời gian</th>
+                    <th>Thanh toán</th>
+                    <th>Trạng thái</th>
+                    <th>Chi tiết</th>
+                    <th>
+                        <button id="select-all" class="btn btn-primary btn-sm ml-2">Chọn tất cả</button>
+                        <button id="delete-orders" class="btn btn-danger btn-sm ml-2">Xóa</button>
+                    </th>
+
+                </tr>
+                </thead>
+                <tbody class="bg-light text-dark">
+
+                <%for(Order o: orderList) {
+                    String status = null;
+                    String buttonClass = "";
+                    if (o.getAddressShipStatus().equals("Chờ xác nhận")){
+                        status = "➞ vận chuyển";
+                        buttonClass = "btn-warning";
+                    } else if (o.getAddressShipStatus().equals("Đang vận chuyển")) {
+                        status = "➞ đã vận chuyển";
+                        buttonClass = "btn-success";
+                    }
+                %>
+
+                <tr class='text-center text-dark font-weight-normal  '>
+                    <td><%= o.getId() %></td>
+                    <td class="hoverable"><%= (userDAO.getUserById(o.getUserId()) != null) ? userDAO.getUserById(o.getUserId()).getName() : "Không xác định" %></td>
+                    <td class="hoverable"><%= o.getAmountDue() + " VND" %></td>
+                    <td class="hoverable"><%= o.getInvoiceNumber() %></td>
+                    <td class="hoverable"><%= o.getOrderDate() %></td>
+                    <td class="hoverable"><%= o.getOrderStatus() %></td>
+                    <td class="hoverable"><%= o.getAddressShipStatus() %>
+                        <%if(!o.getAddressShipStatus().equals("Đơn hàng đã được huỷ")&&!o.getAddressShipStatus().equals("Đã vận chuyển")) {%>
+                        <a href="../changeStatus?orderId=<%=o.getId()%>">
+                            <button class="btn <%= buttonClass %> cancel-order"><%=status%></button></a>
+                        <%}%>
+                    </td>
+                    <td class="hoverable"><a href="../orderDetail?orderId=<%= o.getId() %>" class='text-dark'><i class="bi bi-arrow-right-circle"></i></a></td>
+                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input order-checkbox" type="checkbox" name="orderCheckbox" value="<%= o.getId() %>" id="order<%= o.getId() %>">
+                        </div>
+                    </td>
+                    <%
+                        }%>
+                </tr>
+                </tbody>
+            </table>
+
+            <%
+                }
+            %>
+        </section>
+    </div>
+
 </div>
 
-<!-- Start Footer  -->
-<footer>
-  <div id="container_footer"></div>
-  <jsp:include page="../include/footer.jsp"/>
-</footer>
-<!-- End Footer  -->
 
-<a href="#" id="back-to-top" title="Back to top" style="display: none;"><i class="bi-arrow-up-short"></i></a>
-
-<!-- ALL JS FILES -->
-<script src="../js/jquery-3.2.1.min.js"></script>
-<script src="../js/popper.min.js"></script>
-<script src="../js/bootstrap.min.js"></script>
+<!-- REQUIRED SCRIPTS -->
 <script>
-  document.getElementById('select-all').onclick = function() {
-    var checkboxes = document.getElementsByName('orderCheckbox');
-    for (var checkbox of checkboxes) {
-      checkbox.checked = this.checked;
-    }
-  }
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllButton = document.getElementById('select-all');
+        const deleteOrdersButton = document.getElementById('delete-orders');
+        const checkboxes = document.querySelectorAll('.order-checkbox');
 
-  document.getElementById('delete-orders').onclick = function() {
-    var checkboxes = document.getElementsByName('orderCheckbox');
-    var selectedOrders = [];
-    for (var checkbox of checkboxes) {
-      if (checkbox.checked) {
-        selectedOrders.push(checkbox.value);
-      }
-    }
+        selectAllButton.addEventListener('click', function() {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = !checkbox.checked;
+            });
+        });
 
-    if (selectedOrders.length > 0) {
-      var form = document.createElement('form');
-      form.method = 'POST';
-      form.action = '${pageContext.request.contextPath}/deleteOrders';
+        deleteOrdersButton.addEventListener('click', function() {
+            const selectedOrderIds = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
 
-      selectedOrders.forEach(function(orderId) {
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'orderIds';
-        input.value = orderId;
-        form.appendChild(input);
-      });
+            if (selectedOrderIds.length > 0) {
+                if (confirm('Bạn có chắc chắn muốn xóa các hóa đơn này không?')) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '${pageContext.request.contextPath}/deleteOrders';
 
-      document.body.appendChild(form);
-      form.submit();
-    } else {
-      alert('Vui lòng chọn ít nhất một đơn hàng để xóa.');
-    }
-  }
+                    selectedOrderIds.forEach(orderId => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'orderIds';
+                        input.value = orderId;
+                        form.appendChild(input);
+                    });
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            } else {
+                alert('Vui lòng chọn ít nhất một đơn hàng để xóa.');
+            }
+        });
+    });
 </script>
 
-<!-- ALL PLUGINS -->
-<script src="../js/jquery.superslides.min.js"></script>
-<script src="../js/bootstrap-select.js"></script>
-<script src="../js/inewsticker.js"></script>
-<script src="js/bootsnav.js."></script>
-<script src="../js/images-loded.min.js"></script>
-<script src="../js/isotope.min.js"></script>
-<script src="../js/owl.carousel.min.js"></script>
-<script src="../js/baguetteBox.min.js"></script>
-<script src="../js/form-validator.min.js"></script>
-<script src="../js/contact-form-script.js"></script>
-<script src="../js/custom.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/bootstrap.bundle.min.js"></script>
+<script src="../js/jquery.overlayScrollbars.min.js"></script>
+<script src="../js/adminlte.js"></script>
+<script src="../js/jquery.mousewheel.js"></script>
+<script src="../js/raphael.min.js"></script>
+<script src="../js/jquery.mapael.min.js"></script>
+<script src="../js/usa_states.min.js"></script>
+<script src="../js/Chart.min.js"></script>
+<%--<script src="../js/demo.js"></script>--%>
+<script src="../js/dashboard2.js"></script>
 </body>
+
 </html>
