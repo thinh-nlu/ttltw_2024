@@ -297,7 +297,7 @@
                     <th>Chi tiết</th>
                     <th>
                         <button id="select-all" class="btn btn-primary btn-sm ml-2">Chọn tất cả</button>
-                        <button id="delete-orders" class="btn btn-danger btn-sm ml-2">Xóa</button>
+                        <button id="elete-ordersd" class="btn btn-danger btn-sm ml-2">Xóa</button>
                     </th>
 
                 </tr>

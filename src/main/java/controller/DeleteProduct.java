@@ -23,12 +23,12 @@ public class DeleteProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
-        boolean isDelete = dao.deleteProduct(id);
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("success");
         LogDAO logDAO = new LogDAO(DBConnect.getConnection());
         ProductDAO productDAO = new ProductDAO(DBConnect.getConnection());
         Product p = productDAO.getProductById(id);
+        boolean isDelete = dao.deleteProduct(id);
         String ip = IPAddressUtil.getPublicIPAddress();
         if(isDelete) {
             logDAO.insertLog(new Log(Log.DANGER, user.getId(),ip,"Quản Lí","Xóa sản phẩm"+" "+ p.getTitle()+" "+"thành công",0));

@@ -241,7 +241,12 @@
                         <th>IP</th>
                         <th>Nội Dung</th>
                         <th>Thời gian</th>
-                        <th></th>
+                        <th colspan="1">
+                           <button id="select-all" class="btn btn-primary btn-sm ml-2">Chọn tất cả</button>
+                        </th>
+                        <th>
+                            <button id="delete-logs" class="btn btn-danger btn-sm ml-2">Xóa</button>
+                        </th>
                     </tr>
                     </thead>
                     <tbody class="bg-light text-dark">
@@ -283,7 +288,12 @@
                         <td><%= l.getIp() %></td>
                         <td><%= l.getContent() %></td>
                         <td><%= l.getCreatAt() %></td>
-                        <td><a class='text-dark' onclick="deleteLog(<%= l.getId() %>)"><i class="bi bi-trash"></i></a></td>
+                        <td><a class='text-dark hover' onclick="deleteLog(<%= l.getId() %>)"><i class="bi bi-trash"></i></a></td>
+                        <td colspan="2">
+                            <div class="form-check justify-content-center text-center">
+                                <input class="form-check-input order-checkbox" type="checkbox" name="orderCheckbox" value="<%=l.getId()%>" id="<%=l.getId()%>">
+                            </div>
+                        </td>
                     </tr>
                     <%
                             }
@@ -378,6 +388,9 @@
                                 sortDescending: "sắp xếp giảm dần",
                             }
                         },
+                        columnDefs: [
+                            { orderable: false, targets: [ 7, 8] } // Chỉ định các cột cần tắt sắp xếp, chỉ số cột bắt đầu từ 0
+                        ],
                         layout: {
                             bottomEnd: {
                                 paging: {
@@ -385,6 +398,47 @@
                                 }
                             }
                         }
+                    });
+                </script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const selectAllButton = document.getElementById('select-all');
+                        const deleteOrdersButton = document.getElementById('delete-logs');
+                        const checkboxes = document.querySelectorAll('.order-checkbox');
+
+                        selectAllButton.addEventListener('click', function() {
+                            checkboxes.forEach(checkbox => {
+                                checkbox.checked = !checkbox.checked;
+                            });
+                        });
+
+                        deleteOrdersButton.addEventListener('click', function() {
+                            const selectedOrderIds = Array.from(checkboxes)
+                                .filter(checkbox => checkbox.checked)
+                                .map(checkbox => checkbox.value);
+
+                            if (selectedOrderIds.length > 0) {
+                                if (confirm('Bạn có chắc chắn muốn xóa log này không?')) {
+                                    const form = document.createElement('form');
+                                    form.method = 'GET';
+                                    form.action = '${pageContext.request.contextPath}/RemoveLogAdmin';
+
+                                    selectedOrderIds.forEach(orderId => {
+                                        const input = document.createElement('input');
+                                        input.type = 'hidden';
+                                        input.name = 'id';
+                                        input.value = orderId;
+                                        form.appendChild(input);
+                                    });
+
+                                    document.body.appendChild(form);
+                                    form.submit();
+
+                                }
+                            } else {
+                                alert('Vui lòng chọn ít nhất một log để xóa.');
+                            }
+                        });
                     });
                 </script>
 
