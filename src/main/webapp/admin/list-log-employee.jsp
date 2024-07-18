@@ -131,71 +131,60 @@
                     <li class="nav-item">
                         <a href="insert-product.jsp" class="nav-link">
                             <i class="bi bi-plus-square"></i>
-                            <p>
-                                Thêm sản phẩm
-                            </p>
+                            <p>Thêm sản phẩm</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="list-products.jsp" class="nav-link">
                             <i class="bi bi-box-seam"></i>
-                            <p>Quản lí sản phẩm </p>
+                            <p>Quản lí sản phẩm</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="warehouse.jsp" class="nav-link">
                             <i class="bi bi-boxes"></i>
-                            <p>Quản lí kho </p>
+                            <p>Quản lí kho</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="list-products.jsp" class="nav-link">
+                        <a href="revenueYear.jsp" class="nav-link">
                             <i class="bi bi-bar-chart-line"></i>
                             <p>Thống kê doanh số</p>
                         </a>
                     </li>
 
+                    <%-- Conditionally render user management link based on isAdmin value --%>
+                    <% String isAdmin = user.getIsAdmin(); %>
                     <li class="nav-item">
-                        <a href="revenueYear.jsp" class="nav-link">
+                        <% if ("0".equals(isAdmin)) { %>
+                        <a href="list-user.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
                             <p>Quản lí người dùng</p>
                         </a>
+                        <% } else if ("3".equals(isAdmin)) { %>
+                        <a href="list_user_customer.jsp" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Quản lí người dùng</p>
+                        </a>
+                        <% } %>
                     </li>
 
+                    <%-- Other menu items --%>
                     <li class="nav-item">
                         <a href="list-oders.jsp" class="nav-link">
                             <i class="bi bi-basket"></i>
                             <p>Quản lí đơn hàng</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <p>Giám sát đơn hàng</p>
-                        </a>
-                    </li>
 
-                    <%-- Kiểm tra và ẩn menu nếu isAdmin là 3 --%>
-                    <%   String isAdmin = user.getIsAdmin();
-                        if (!isAdmin.equals("3")) { %>
-
-
-
-
+                    <%-- Hide specific menu items if isAdmin is 3 --%>
+                    <% if (!"3".equals(isAdmin)) { %>
                     <li class="nav-item">
                         <a href="edit_role.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
-                            <p>Quản lí quyền hạng</p>
+                            <p>Quản lí quyền hạn</p>
                         </a>
                     </li>
-
-                    <li class="nav-item">
-                        <a href="list-employee.jsp" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <p>Quản lí nhân viên</p>
-                        </a>
-                    </li>
-
                     <li class="nav-item">
                         <a href="list-log.jsp" class="nav-link">
                             <i class="bi bi-clipboard2-data-fill"></i>
@@ -210,10 +199,9 @@
                             <p>Khuyến mãi sản phẩm</p>
                         </a>
                     </li>
-
-
                 </ul>
             </nav>
+
         </div>
     </aside>
 

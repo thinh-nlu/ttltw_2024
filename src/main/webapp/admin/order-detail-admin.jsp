@@ -128,21 +128,19 @@
                     <li class="nav-item">
                         <a href="insert-product.jsp" class="nav-link">
                             <i class="bi bi-plus-square"></i>
-                            <p>
-                                Thêm sản phẩm
-                            </p>
+                            <p>Thêm sản phẩm</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="list-products.jsp" class="nav-link">
                             <i class="bi bi-box-seam"></i>
-                            <p>Quản lí sản phẩm </p>
+                            <p>Quản lí sản phẩm</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="warehouse.jsp" class="nav-link">
                             <i class="bi bi-boxes"></i>
-                            <p>Quản lí kho </p>
+                            <p>Quản lí kho</p>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -152,47 +150,38 @@
                         </a>
                     </li>
 
+                    <%-- Conditionally render user management link based on isAdmin value --%>
+                    <% String isAdmin = user.getIsAdmin(); %>
                     <li class="nav-item">
+                        <% if ("0".equals(isAdmin)) { %>
                         <a href="list-user.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
                             <p>Quản lí người dùng</p>
                         </a>
+                        <% } else if ("3".equals(isAdmin)) { %>
+                        <a href="list_user_customer.jsp" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Quản lí người dùng</p>
+                        </a>
+                        <% } %>
                     </li>
 
+                    <%-- Other menu items --%>
                     <li class="nav-item">
                         <a href="list-oders.jsp" class="nav-link">
                             <i class="bi bi-basket"></i>
                             <p>Quản lí đơn hàng</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <p>Giám sát đơn hàng</p>
-                        </a>
-                    </li>
 
-                    <%-- Kiểm tra và ẩn menu nếu isAdmin là 3 --%>
-                    <%   String isAdmin = user.getIsAdmin();
-                        if (!isAdmin.equals("3")) { %>
-
-
-
-
+                    <%-- Hide specific menu items if isAdmin is 3 --%>
+                    <% if (!"3".equals(isAdmin)) { %>
                     <li class="nav-item">
                         <a href="edit_role.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
-                            <p>Quản lí quyền hạng</p>
+                            <p>Quản lí quyền hạn</p>
                         </a>
                     </li>
-
-                    <li class="nav-item">
-                        <a href="list-employee.jsp" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <p>Quản lí nhân viên</p>
-                        </a>
-                    </li>
-
                     <li class="nav-item">
                         <a href="list-log.jsp" class="nav-link">
                             <i class="bi bi-clipboard2-data-fill"></i>
@@ -207,10 +196,9 @@
                             <p>Khuyến mãi sản phẩm</p>
                         </a>
                     </li>
-
-
                 </ul>
             </nav>
+
         </div>
     </aside>
 
@@ -227,7 +215,7 @@
         </div>
         <section class="content">
             <h3 class="text-center text-dark pb-3 display-4 font-weight-normal" >Chi tiết đơn hàng</h3>
-            <table class="table table-striped text-center  ">
+            <table id="dataTable" class="table table-striped text-center  ">
                 <thead class="bg-dark">
                 <tr class="text-light">
                     <th>STT</th>
@@ -255,10 +243,36 @@
 
         </section>
     </div>
+    <script>
+        new DataTable('#dataTable', {
+            language: {
+                processing: "Đang tải dữ liệu",
+                search: "Tìm kiếm",
+                lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
+                info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
+                loadingRecords: "",
+                zeroRecords: "Không có tìm kiếm phù hợp",
+                emptyTable: "Không có dữ liệu",
+                paginate: {
+                    first: "Trang đầu",
+                    previous: "Trang trước",
+                    next: "Trang sau",
+                    last: "Trang cuối"
+                },
+                aria: {
+                    sortAscending: "sắp xếp tăng dần",
+                    sortDescending: "sắp xếp giảm dần",
+                }
+            },
+        });
+    </script>
 
 </div>
 
 <!-- REQUIRED SCRIPTS -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.0.5/js/dataTables.js"></script>
+<link href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css" rel="stylesheet">
 <script src="../js/jquery.min.js"></script>
 <script src="../js/bootstrap.bundle.min.js"></script>
 <script src="../js/jquery.overlayScrollbars.min.js"></script>

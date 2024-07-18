@@ -3,14 +3,16 @@
 <%@ page import="database.DBConnect" %>
 <%@ page import="dao.OrderDAO" %>
 <%@ page import="dao.UserDAO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
     User user = (User) session.getAttribute("success");
-    ProductDAO dao = new ProductDAO(DBConnect.getConnection());
-    OrderDAO dao1 = new OrderDAO(DBConnect.getConnection());
-    UserDAO dao2 = new UserDAO(DBConnect.getConnection());
-    int sumUser = dao2.getUserCount();
+    UserDAO dao = new UserDAO(DBConnect.getConnection());
+    List<User> users = dao.getAllUser();
+    String isActive = "";
+
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +33,9 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="../css/adminlte.min.css">
     <link rel="stylesheet" href="../asset/bootstrap-icons-1.11.1/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.0.5/js/dataTables.js"></script>
+    <link href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css" rel="stylesheet">
 </head>
 
 <body class="hold-transition lightblue-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
@@ -195,6 +200,7 @@
                 </ul>
             </nav>
 
+
         </div>
     </aside>
 
@@ -202,88 +208,116 @@
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">TRANG QUẢN LÍ</h1>
+                    </div>
+                </div>
             </div>
         </div>
         <section class="content">
-            <div class="container mt-3">
-                <h1 class="text-center">Thêm sản phẩm</h1>
-                <!-- form -->
-                <form action="../add_product" method="post" enctype="multipart/form-data">
-                    <!-- title -->
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_title" class="form-label">Tên sản phẩm</label>
-                        <input type="text" name="product_title" id="product_title" class="form-control"
-                               placeholder="Nhập sản phẩm" autocomplete="off" required="required">
-                    </div>
+            <h3 class="text-center text-dark pb-3 display-4 font-weight-normal" >Danh sách tài khoản nhân viên</h3>
+            <select class="form-select " aria-label="" onchange="redirectToSelectedPage(this)">
+                <option selected>Tài khoản của nhân viên</option>
+                <option value="list-user.jsp" >Tất cả tài khoản</option>
+                <option value="list_user_customer.jsp" >Tài khoản của khách hàng</option>
+            </select>
+            <div class="px-lg-2 pt-xl-2 mb-5">
+                <c:if test="${not empty deleteSuccess}">
+                <p class="text-center text-success">${deleteSuccess}</p>
+                    <c:remove var="deleteSuccess" scope="session"/>
+                </c:if>
+                <c:if test="${not empty deleteFailed}">
+                <p class="text-center text-danger">${deleteFailed}</p>
+                    <c:remove var="deleteFailed" scope="session"/>
+                </c:if>
+                <form method="post" action="../blockUser">
+                    <table id="dataTable" class="table table-striped text-center ">
+                        <thead class="bg-dark">
+                        <tr class="text-light">
+                            <th>ID</th>
+                            <th>Tên Người Dùng </th>
+                            <th>Email </th>
+                            <th>Số Điện Thoại</th>
+                            <th>Xóa</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                        </thead>
+                        <tbody class="bg-light text-dark">
+                        <%
 
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="unit" class="form-label">Đơn vị</label>
-                        <select class="form-control" id="unit" name="unit" required="required">
-                            <option value="kg">Kg</option>
-                            <option value="g">g</option>
-                        </select>
-
-                    </div>
-                    <!-- price -->
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_price" class="form-label">Giá bán ra</label>
-                        <input type="number" name="product_price" id="product_price" class="form-control"
-                               placeholder="Nhập giá sản phẩm" autocomplete="off" required="required">
-                    </div>
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_price_in" class="form-label">Giá nhập vào</label>
-                        <input type="number" name="product_price_in" id="product_price_in" class="form-control"
-                               placeholder="Nhập giá sản phẩm" autocomplete="off" required="required">
-                    </div>
-                    <!-- keywords -->
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_keyword" class="form-label">Từ khóa</label>
-                        <input type="text" name="product_keyword" id="product_keyword" class="form-control"
-                               placeholder="Nhập từ khóa" autocomplete="off" required="required">
-                    </div>
-
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="quantity" class="form-label">Số lượng</label>
-                        <input type="number" name="quantity" id="quantity" class="form-control"
-                               placeholder="Nhập số lượng" autocomplete="off" required="required">
-                    </div>
-
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_category" class="form-label">Loại</label>
-                        <select class="form-control" id="product_category" name="product_category" required="required">
-                            <option value="rau">Rau</option>
-                            <option value="cu">Củ</option>
-                            <option value="hat">Hạt</option>
-                            <option value="qua">Quả</option>
-                        </select>
-                    </div>
-
-                    <!-- image -->
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_image" class="form-label">Hình ảnh sản phẩm</label>
-                        <input type="file" name="product_image" id="product_image" class="form-control"
-                               required="required">
-                    </div>
-
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="unit_price" class="form-label">Đơn Giá</label>
-                        <input type="number" name="unit_price" id="unit_price" class="form-control"
-                               required="required">
-                    </div>
-
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_descrip" class="form-label">Mô tả sản phẩm</label>
-                        <input type="text" name="product_descrip" id="product_descrip" class="form-control"
-                               required="required">
-                    </div>
+                            List<User> employeeList = new ArrayList<>();
+                            for (User u : users) {
+                                if (u.getIsAdmin().equals("3")) {
+                                    employeeList.add(u);
+                                }
+                            }
+                            for (User u : employeeList) {
+                                isActive = u.getIsActive();
+                                int id = u.getId();
+                        %>
+                        <tr class='text-center text-dark font-weight-normal  '>
+                            <td><%=id%></td>
+                            <td><%=u.getName()%></td>
+                            <td><%=u.getEmail()%></td>
+                            <td><%=u.getContact()%></td>
+                            <td><a href="../deleteUser?id=<%=id%>" class='text-dark'><i class="bi bi-trash"></i></a></td>
+                            <td>
+                                <%
+                                    if(isActive.equals("1")) {
+                                %>
+                                <!-- Nút Active -->
+                                <a class="btn btn-success" href="../blockUser?id=<%=id%>" >
+                                    <i class="bi bi-check-circle"></i> Đang Hoạt Động
+                                </a>
+                                <%
+                                } else {
+                                %>
+                                <!-- Nút Block -->
+                                <a class="btn btn-danger" href="../blockUser?id=<%=id%>">
+                                    <i class="bi bi-x-circle"></i> Chặn
+                                </a>
+                                <%}%>
+                            </td>
 
 
-                    <!-- submit button -->
-                    <div class="form-outline mb-4 w-50 m-auto pt-2">
-                        <input type="submit" name="insert_product" class="btn btn-info mb-3 px-3" value="Thêm sản phẩm">
-                    </div>
+                        </tr>
+                        <%
+
+                            }
+                        %>
+                        </tbody>
+                    </table>
                 </form>
-            </div>
+                    <script>
+                        function redirectToSelectedPage(select) {
+                            var selectedOption = select.value;
+                            if (selectedOption) {
+                                window.location.href = selectedOption;
+                            }
+                        }
+                        new DataTable('#dataTable', {
+                            language: {
+                                processing: "Đang tải dữ liệu",
+                                search: "Tìm kiếm",
+                                lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
+                                info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
+                                loadingRecords: "",
+                                zeroRecords: "Không có tìm kiếm phù hợp",
+                                emptyTable: "Không có dữ liệu",
+                                paginate: {
+                                    first: "Trang đầu",
+                                    previous: "Trang trước",
+                                    next: "Trang sau",
+                                    last: "Trang cuối"
+                                },
+                                aria: {
+                                    sortAscending: "sắp xếp tăng dần",
+                                    sortDescending: "sắp xếp giảm dần",
+                                }
+                            },
+                        });
+                    </script>
 
 
         </section>
