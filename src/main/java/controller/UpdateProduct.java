@@ -24,11 +24,13 @@ public class UpdateProduct extends HttpServlet {
         Product productFromId = dao.getProductById(id);
         String title = req.getParameter("product_title");
         String price = req.getParameter("product_price");
+        String price_in = req.getParameter("product_price_in");
         String unit = req.getParameter("unit");
         String category = req.getParameter("product_category");
         String keyword = req.getParameter("product_keyword");
         String quantity = req.getParameter("quantity");
         String unitPrice = req.getParameter("unit_price");
+        String descript = req.getParameter("description");
         Part part = req.getPart("product_image");
         String image = part.getSubmittedFileName();
         String path = getServletContext().getRealPath("/DataWeb/");
@@ -36,7 +38,7 @@ public class UpdateProduct extends HttpServlet {
         if(!file.exists()) file.mkdirs();
         part.write(path + File.separator + image);
 
-        Product p = new Product(id,title,price,unit,productFromId.getImage(),category,keyword,productFromId.getTimestamp(),quantity,productFromId.getStatus(),unitPrice);
+        Product p = new Product(id,title,price,price_in,unit,productFromId.getImage(),category,keyword,productFromId.getTimestamp(),quantity,productFromId.getStatus(),unitPrice,descript);
         System.out.println(p);
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("success");

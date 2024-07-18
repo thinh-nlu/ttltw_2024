@@ -136,6 +136,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="warehouse.jsp" class="nav-link">
+                            <i class="bi bi-boxes"></i>
+                            <p>Quản lí kho </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="revenueYear.jsp" class="nav-link">
                             <i class="bi bi-bar-chart-line"></i>
                             <p>Thống kê doanh số</p>
@@ -232,8 +238,13 @@
                     </div>
                     <!-- price -->
                     <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_price" class="form-label">Giá sản phẩm</label>
+                        <label for="product_price" class="form-label">Giá bán ra</label>
                         <input type="number" name="product_price" id="product_price" class="form-control"
+                               placeholder="Nhập giá sản phẩm" autocomplete="off" required="required">
+                    </div>
+                    <div class="form-outline mb-4 w-50 m-auto">
+                        <label for="product_price_in" class="form-label">Giá nhập vào</label>
+                        <input type="number" name="product_price_in" id="product_price_in" class="form-control"
                                placeholder="Nhập giá sản phẩm" autocomplete="off" required="required">
                     </div>
                     <!-- keywords -->

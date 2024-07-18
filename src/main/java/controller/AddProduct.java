@@ -23,6 +23,7 @@ public class AddProduct extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String title = req.getParameter("product_title");
         String price = req.getParameter("product_price");
+        String price_in = req.getParameter("product_price_in");
         String unit = req.getParameter("unit");
         String category = req.getParameter("product_category");
         String keyword = req.getParameter("product_keyword");
@@ -38,7 +39,7 @@ public class AddProduct extends HttpServlet {
         if(!file.exists()) file.mkdirs();
         part.write(path + File.separator + image);
 
-        Product p = new Product(title,price,unit,image,category,keyword,quantity,"con",unitPrice,descript);
+        Product p = new Product(title,price,price_in,unit,image,category,keyword,quantity,"con",unitPrice,descript);
         System.out.println(p);
         ProductDAO dao = new ProductDAO(DBConnect.getConnection());
         LogDAO logDAO = new LogDAO(DBConnect.getConnection());

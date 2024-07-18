@@ -79,11 +79,8 @@
              placeholder="Nhập từ khóa" autocomplete="off" required="required" value="<%=product.getKeyword()%>">
     </div>
 
-    <div class="form-outline mb-4 w-50 m-auto">
-      <label for="quantity" class="form-label">Số lượng</label>
-      <input type="number" name="quantity" id="quantity" class="form-control"
-             placeholder="Nhập số lượng" autocomplete="off" required="required" value="<%=product.getQuantity()%>">
-    </div>
+    <input type="hidden" name="quantity" id="quantity" class="form-control"
+           placeholder="Nhập số lượng" autocomplete="off" required="required" value="<%=product.getQuantity()%>">
 
     <div class="form-outline mb-4 w-50 m-auto">
       <label for="product_category" class="form-label">Loại</label>
@@ -108,6 +105,11 @@
       <label for="unit_price" class="form-label">Đơn Giá</label>
       <input type="number" name="unit_price" id="unit_price" class="form-control"
              required="required" value="<%=product.getUnitPrice()%>">
+    </div>
+    <div class="form-outline mb-4 w-50 m-auto">
+      <label for="description" class="form-label">Mô tả</label>
+      <input type="text" name="description" id="description" class="form-control"
+             required="required" value="<%=product.getDescription()%>">
     </div>
 
 

@@ -281,6 +281,7 @@
                             double totalPrice = cartProduct.totalPriceAllProduct();
                             double percent = 5.0;
                             double tax = (totalPrice / 100) * percent;
+                            double shippingfee = 30000;
                         %>
                         <div class="d-flex">
                             <h4>Tổng giá tiền</h4>
@@ -293,12 +294,12 @@
                         </div>
                         <div class="d-flex">
                             <h4>Phí giao hàng</h4>
-                            <div class="ml-auto font-weight-bold"> Miễn Phí </div>
+                            <div class="ml-auto font-weight-bold"> 30000đ </div>
                         </div>
                         <hr>
                         <div class="d-flex gr-total">
                             <h5>Thành tiền</h5>
-                            <div class="ml-auto h5"> <%=totalPrice + tax  + "đ"%> </div>
+                            <div class="ml-auto h5"> <%=totalPrice + tax  + shippingfee + "đ"%> </div>
                         </div>
                         <hr> </div>
                 </div>
