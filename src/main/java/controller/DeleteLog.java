@@ -22,9 +22,11 @@ public class DeleteLog extends HttpServlet {
                 LogDAO logDAO = new LogDAO(DBConnect.getConnection());
                 logDAO.deleteLog(Integer.parseInt(logId));
                 response.setStatus(HttpServletResponse.SC_OK);
+                response.sendRedirect("admin/list-log.jsp");
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 e.printStackTrace(); // In ra lỗi vào console để debug
+                response.sendRedirect("admin/list-log.jsp");
             }
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

@@ -310,13 +310,49 @@ public class OrderDAO {
         }
         return dailyRevenueMap;
     }
+    public double getMonthlyProfit(int month, int year) {
+        double revenue = 0;
+        double cost = 0;
+
+        // Calculate total revenue
+        String revenueQuery = "SELECT SUM(amount_due) FROM orders WHERE MONTH(order_date) = ? AND YEAR(order_date) = ? AND order_shipping_status = 'Đã vận chuyển'";
+        try {
+            ps = con.prepareStatement(revenueQuery);
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                revenue = rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Calculate total cost
+        String costQuery = "SELECT SUM(price_in * quantity) FROM products WHERE MONTH(insertDate) = ? AND YEAR(insertDate) = ?";
+        try {
+            ps = con.prepareStatement(costQuery);
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                cost = rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Calculate profit
+        return revenue - cost;
+    }
+
 
 
 
     public static void main(String[] args) {
         OrderDAO orderDAO = new OrderDAO(DBConnect.getConnection());
-            System.out.println(orderDAO.getDailyRevenue(1,2024));
-        System.out.println(orderDAO.getMonthlyRevenue(1,2024));
+
+        System.out.println(orderDAO.getMonthlyProfit(7,2024));
 
 
 
