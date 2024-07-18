@@ -1,6 +1,7 @@
 package dao;
 
 import database.DBConnect;
+import model.Address;
 import model.Order;
 
 import java.sql.Connection;
@@ -38,6 +39,30 @@ public class OrderDAO {
             throw new RuntimeException(e);
         }
         return isAdd;
+    }
+    public Address getAddressByOrderId(int orderId) {
+        Address address = null;
+        query = "SELECT a.id, a.user_id, a.first_name, a.last_name, a.address, a.method_payment, a.email, a.contact " +
+                "FROM orders o JOIN address a ON o.address_id = a.id WHERE o.id = ?";
+        try {
+            ps = con.prepareStatement(query);
+            ps.setInt(1, orderId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                address = new Address();
+                address.setId(rs.getInt(1));
+                address.setUserId(rs.getInt(2));
+                address.setFirstName(rs.getString(3));
+                address.setLastName(rs.getString(4));
+                address.setAddress(rs.getString(5));
+                address.setPaymentMethod(rs.getString(6));
+                address.setEmail(rs.getString(7));
+                address.setContact(rs.getString(8));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return address;
     }
     public int getOrderRowCount() {
         int rowCount = 0;
@@ -81,7 +106,7 @@ public class OrderDAO {
 
     public Order getOrderById(int id) {
         Order o = null;
-        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status, order_shipping_status FROM orders WHERE id = ?";
+        query = "SELECT id, user_id, invoice_number, amount_due, order_date, order_status,address_id, order_shipping_status FROM orders WHERE id = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setInt(1, id);
@@ -94,6 +119,7 @@ public class OrderDAO {
                 o.setAmountDue(rs.getString("amount_due"));
                 o.setOrderDate(rs.getTimestamp("order_date"));
                 o.setOrderStatus(rs.getString("order_status"));
+                o.setOrderStatus(rs.getString("address_id"));
                 o.setAddressShipStatus(rs.getString("order_shipping_status"));
             }
         } catch (SQLException e) {
