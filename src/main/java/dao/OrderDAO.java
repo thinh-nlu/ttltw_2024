@@ -7,8 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class OrderDAO {
     private String query = "";
@@ -236,9 +235,63 @@ public class OrderDAO {
             e.printStackTrace();
         }
     }
+    public double getMonthlyRevenue(int month, int year) {
+        double revenue = 0;
+        query = "SELECT SUM(amount_due) FROM orders WHERE MONTH(order_date) = ? AND YEAR(order_date) = ? AND order_shipping_status = 'Đã vận chuyển'";
+        try {
+            ps = con.prepareStatement(query);
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                revenue = rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return revenue;
+    }
+    public Map<String, Double> getDailyRevenue(int month, int year) {
+        Map<String, Double> dailyRevenueMap = new LinkedHashMap<>(); // Sử dụng LinkedHashMap để giữ thứ tự các ngày
+        String query = "SELECT DAY(order_date), SUM(amount_due) " +
+                "FROM orders " +
+                "WHERE MONTH(order_date) = ? AND YEAR(order_date) = ? AND order_shipping_status = 'Đã vận chuyển' " +
+                "GROUP BY DAY(order_date) " +
+                "ORDER BY DAY(order_date)";
+        try {
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int day = rs.getInt(1);
+                double revenue = rs.getDouble(2);
+                dailyRevenueMap.put("Ngày " + day, revenue);
+            }
+
+            // Đảm bảo tất cả các ngày từ 1 đến ngày cuối cùng của tháng đều có mặt trong bản đồ
+            int lastDay = java.time.LocalDate.of(year, month, 1).withDayOfMonth(java.time.LocalDate.of(year, month, 1).lengthOfMonth()).getDayOfMonth();
+            for (int i = 1; i <= lastDay; i++) {
+                String dayLabel = "Ngày " + i;
+                if (!dailyRevenueMap.containsKey(dayLabel)) {
+                    dailyRevenueMap.put(dayLabel, 0.0);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return dailyRevenueMap;
+    }
+
+
 
     public static void main(String[] args) {
         OrderDAO orderDAO = new OrderDAO(DBConnect.getConnection());
+            System.out.println(orderDAO.getDailyRevenue(1,2024));
+        System.out.println(orderDAO.getMonthlyRevenue(1,2024));
+
 
 
     }

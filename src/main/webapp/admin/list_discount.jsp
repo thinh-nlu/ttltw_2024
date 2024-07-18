@@ -43,6 +43,7 @@
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+
     <![endif]-->
 </head>
 
@@ -143,9 +144,15 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="list-products.jsp" class="nav-link">
+                        <a href="revenueYear.jsp" class="nav-link">
                             <i class="bi bi-box-seam"></i>
                             <p>Quản lí sản phẩm </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="list-products.jsp" class="nav-link">
+                            <i class="bi bi-bar-chart-line"></i>
+                            <p>Thống kê doanh số</p>
                         </a>
                     </li>
 
@@ -222,6 +229,7 @@
                 </div>
             </div>
         </div>
+
         <section class="content">
             <h3 class="text-center text-dark pb-3 display-4 font-weight-normal" >Quản Lí Khuyến Mãi</h3>
             <div class="px-lg-5 pt-xl-5">

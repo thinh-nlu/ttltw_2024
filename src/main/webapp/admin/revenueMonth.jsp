@@ -1,16 +1,20 @@
+
+
 <%@ page import="model.User" %>
 <%@ page import="dao.ProductDAO" %>
 <%@ page import="database.DBConnect" %>
 <%@ page import="dao.OrderDAO" %>
 <%@ page import="dao.UserDAO" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
     User user = (User) session.getAttribute("success");
-    UserDAO dao = new UserDAO(DBConnect.getConnection());
-    List<User> users = dao.getAllUser();
+    ProductDAO dao = new ProductDAO(DBConnect.getConnection());
+    OrderDAO dao1 = new OrderDAO(DBConnect.getConnection());
+    UserDAO dao2 = new UserDAO(DBConnect.getConnection());
+
+
+
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,10 +35,7 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="../css/adminlte.min.css">
     <link rel="stylesheet" href="../asset/bootstrap-icons-1.11.1/bootstrap-icons.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdn.datatables.net/2.0.5/js/dataTables.js"></script>
-    <link href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css" rel="stylesheet">
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="hold-transition lightblue-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
@@ -219,102 +220,90 @@
                 </div>
             </div>
         </div>
+
         <section class="content">
-            <h3 class="text-center text-dark pb-3 display-4 font-weight-normal">Quản lí quyền hạn</h3>
-            <div class="px-lg-5 pt-xl-5 mb-5">
-                <c:if test="${not empty deleteSuccess}">
-                    <p class="text-center text-success">${deleteSuccess}</p>
-                    <c:remove var="deleteSuccess" scope="session"/>
-                </c:if>
-                <c:if test="${not empty deleteFailed}">
-                    <p class="text-center text-danger">${deleteFailed}</p>
-                    <c:remove var="deleteFailed" scope="session"/>
-                </c:if>
-                <form method="post" action="../UpdateRole">
-                    <table id="dataTable" class="table table-striped text-center ">
-                        <thead class="bg-dark">
-                        <tr class="text-light">
-                            <th>ID</th>
-                            <th>Tên Người Dùng</th>
-                            <th>Email</th>
-                            <th>Số Điện Thoại</th>
-                            <th>Quyền Hạn</th>
-                        </tr>
-                        </thead>
-                        <tbody class="bg-light text-dark">
-                        <%
-                            List<User> userList = new ArrayList<>();
-                            for (User u  : users){
-                                assert user != null;
-                                if (user.getId()!=u.getId()){
-                                    userList.add(u);
+            <ul class="nav nav-tabs pl-lg-5">
+                <li class="nav-item">
+                    <a class="nav-link " aria-current="page" href="revenueYear.jsp">Doanh thu tháng theo năm</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="revenueMonth.jsp">Doanh thu ngày theo tháng</a>
+                </li>
+            </ul>
+            <div>
+                <label for="monthSelect">Chọn tháng:</label>
+                <select id="monthSelect" onchange="updateChart()">
+                    <option value="1">Tháng 1</option>
+                    <option value="2">Tháng 2</option>
+                    <option value="3">Tháng 3</option>
+                    <option value="4">Tháng 4</option>
+                    <option value="5">Tháng 5</option>
+                    <option value="6">Tháng 6</option>
+                    <option value="7">Tháng 7</option>
+                    <option value="8">Tháng 8</option>
+                    <option value="9">Tháng 9</option>
+                    <option value="10">Tháng 10</option>
+                    <option value="11">Tháng 11</option>
+                    <option value="12">Tháng 12</option>
+                </select>
+            </div>
+            <div>
+                <label for="yearSelect">Chọn năm:</label>
+                <select id="yearSelect" onchange="updateChart()">
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024" selected>2024</option>
+                </select>
+            </div>
+            <div style="width: 800px;"><canvas id="myChart"></canvas></div>
+        </section>
+
+        <script>
+            var xValues = [];
+            var yValues = [];
+            var myChart = null; // Khai báo biến myChart để lưu trữ biểu đồ
+
+            function updateChart() {
+                var month = document.getElementById('monthSelect').value;
+                var year = document.getElementById('yearSelect').value;
+
+                fetch("../DailyRevenue?month="+month+"&year="+year)
+                    .then(response => response.json())
+                    .then(data => {
+                        xValues = Object.keys(data); // Ngày trong tháng
+                        yValues = Object.values(data); // Doanh thu tương ứng
+
+                        if (myChart) {
+                            myChart.destroy(); // Hủy biểu đồ cũ trước khi tạo biểu đồ mới
+                        }
+
+                        myChart = new Chart(document.getElementById('myChart'), {
+                            type: "bar",
+                            data: {
+                                labels: xValues,
+                                datasets: [{
+                                    data: yValues,
+                                    backgroundColor: "#80AF81"
+                                }]
+                            },
+                            options: {
+                                legend: { display: false },
+                                title: {
+                                    display: true,
+                                    text: "Thống kê doanh thu các  ngày trong tháng"+" "+month+" trong năm " + year
                                 }
                             }
-                            for (User u : userList) {
-                                int id = u.getId();
-                        %>
-                        <tr class='text-center text-dark font-weight-normal  '>
-                            <td><%=id%></td>
-                            <td><%=u.getName()%></td>
-                            <td><%=u.getEmail()%></td>
-                            <td><%=u.getContact()%></td>
-                            <td>
-                                <%
-                                    String role = null;
-                                    String userIsAdmin = u.getIsAdmin(); // Đổi tên biến để tránh xung đột
-                                    if (userIsAdmin.equals("0")){
-                                        role = "QUẢN LÍ";
-                                    } else if (userIsAdmin.equals("2") || userIsAdmin.equals("1")) {
-                                        role = "KHÁCH HÀNG";
-                                    } else if (userIsAdmin.equals("3")) {
-                                        role = "NHÂN VIÊN";
-                                    }
-                                %>
-                                <form action="../UpdateRole" method="post">
-                                    <input type="hidden" name="userId" value="<%= u.getId() %>">
-                                    <select name="newRole">
-                                        <option selected><%=role%></option>
-                                        <option value="1">KHÁCH HÀNG</option>
-                                        <option value="3">NHÂN VIÊN</option>
-                                        <option value="0">QUẢN LÍ</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-info">Cập nhật</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <%
-                            }
-                        %>
-                        </tbody>
-                    </table>
-                </form>
-                <script>
-                    new DataTable('#dataTable', {
-                        language: {
-                            processing: "Đang tải dữ liệu",
-                            search: "Tìm kiếm",
-                            lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
-                            info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
-                            loadingRecords: "",
-                            zeroRecords: "Không có tìm kiếm phù hợp",
-                            emptyTable: "Không có dữ liệu",
-                            paginate: {
-                                first: "Trang đầu",
-                                previous: "Trang trước",
-                                next: "Trang sau",
-                                last: "Trang cuối"
-                            },
-                            aria: {
-                                sortAscending: "sắp xếp tăng dần",
-                                sortDescending: "sắp xếp giảm dần",
-                            }
-                        },
-                    });
-                </script>
+                        });
+                    })
+                    .catch(error => console.error('Error fetching revenue data:', error));
+            }
 
-            </div>
-        </section>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                updateChart();
+            });
+        </script>
     </div>
+
 
 </div>
 

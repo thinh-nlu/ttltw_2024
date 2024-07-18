@@ -135,6 +135,12 @@
                             <p>Quản lí sản phẩm </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="revenueYear.jsp" class="nav-link">
+                            <i class="bi bi-bar-chart-line"></i>
+                            <p>Thống kê doanh số</p>
+                        </a>
+                    </li>
 
                     <li class="nav-item">
                         <a href="list-user.jsp" class="nav-link">
