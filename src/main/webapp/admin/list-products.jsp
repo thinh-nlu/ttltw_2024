@@ -8,23 +8,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
-
-    String spageid = request.getParameter("page");
-    int pageid = (spageid != null && !spageid.isEmpty()) ? Integer.parseInt(spageid) : 1;
-    int totalPerPage =16;
-    if(pageid==1){}
-    else{
-        pageid=pageid-1;
-        pageid=pageid* totalPerPage +1;
-    }
     ProductDAO dao = new ProductDAO(DBConnect.getConnection());
-    List<Product> list = dao.getRecords(pageid, totalPerPage);
     List<Product> allList = dao.getAllProduct();
-    double totalProducts = allList.size();
     User user = (User) session.getAttribute("success");
     String updateProductMes = (String) session.getAttribute("updateProductMes");
     if(updateProductMes == null) updateProductMes = "";
-
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -153,6 +141,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="warehouse.jsp" class="nav-link">
+                            <i class="bi bi-boxes"></i>
+                            <p>Quản lí kho </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="revenueYear.jsp" class="nav-link">
                             <i class="bi bi-bar-chart-line"></i>
                             <p>Thống kê doanh số</p>
@@ -250,8 +244,10 @@
                         <th>ID</th>
                         <th>Tên sản phẩm </th>
                         <th>Hình ảnh sản phẩm </th>
-                        <th>Giá</th>
-                        <th>Đơn giá</th>
+                        <th>Giá nhập vào</th>
+                        <th>Giá bán ra</th>
+                        <th>Số lượng tồn kho</th>
+                        <th>Nhập thêm số lượng</th>
                         <th>Chỉnh sửa</th>
                         <th>Xóa</th>
                     </tr>
@@ -266,9 +262,11 @@
                         <td><%=p.getTitle()%></td>
                         <td><img width="50" height="50" class='cart_img' src='../DataWeb/<%=p.getImage()%>'></td>
 
-                        <td><%=p.getPrice()%></td>
+                        <td><%=p.getPriceIn()+"/"+p.getUnitPrice()+p.getUnit()%></td>
                         <td><%=p.getPrice()+"/"+p.getUnitPrice()+p.getUnit()%></td>
-                        <td><a href="edit_products.jsp?id=<%=p.getId()%>" class='text-dark'><i class=" bi bi-pencil-square"> </i></a></td>
+                        <td><%=p.getQuantity()%></td>
+                        <td><a href="add_product_quantity.jsp?id=<%=p.getId()%>" class='text-dark'><i class="bi bi-plus-square"></i></a></td>
+                        <td><a href="edit_products.jsp?id=<%=p.getId()%>" class='text-dark'><i class="bi bi-pencil-square"></i></a></td>
                         <td><a href="../delete?id=<%=p.getId()%>" class='text-dark'><i class="bi bi-trash"></i></a></td>
                         <%
                                 }

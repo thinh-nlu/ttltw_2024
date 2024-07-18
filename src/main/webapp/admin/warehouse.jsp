@@ -3,12 +3,19 @@
 <%@ page import="database.DBConnect" %>
 <%@ page import="dao.OrderDAO" %>
 <%@ page import="dao.UserDAO" %>
+<%@ page import="model.Product" %>
+<%@ page import="java.util.List" %>
+<%@ page import="dao.WarehouseDAO" %>
+<%@ page import="model.Warehouse" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
     User user = (User) session.getAttribute("success");
     ProductDAO dao = new ProductDAO(DBConnect.getConnection());
-    OrderDAO dao1 = new OrderDAO(DBConnect.getConnection());
+    WarehouseDAO warehouseDAO = new WarehouseDAO(DBConnect.getConnection());
+
+    List<Product> allList = dao.getAllProduct();
+    List<Warehouse> warehouseList = warehouseDAO.getAllWarehouses();
     UserDAO dao2 = new UserDAO(DBConnect.getConnection());
     int sumUser = dao2.getUserCount();
 
@@ -137,6 +144,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="warehouse.jsp" class="nav-link">
+                            <i class="bi bi-boxes"></i>
+                            <p>Quản lí kho </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="revenueYear.jsp" class="nav-link">
                             <i class="bi bi-bar-chart-line"></i>
                             <p>Thống kê doanh số</p>
@@ -217,120 +230,43 @@
             </div>
         </div>
         <section class="content">
+            <h3 class="text-center text-dark pb-3 display-4 font-weight-normal" >Quản Lí Nhập Kho</h3>
+            <div class="px-lg-5 pt-xl-1">
+                <table id="dataTable" class="table table-striped text-center ">
+                    <thead class="bg-dark">
+                    <tr class="text-light">
+                        <th>ID</th>
+                        <th>Sản phẩm </th>
+                        <th>Số lượng nhập vào</th>
+                        <th>Ngày nhập</th>
+                        <th>Giá nhập vào</th>
+                        <th>Giá bán ra</th>
+                        <th>Tổng tiền nhập</th>
+                        <th>Xóa</th>
+                    </tr>
+                    </thead>
+                    <tbody class="bg-light text-dark">
+                    <%
+                        for(Warehouse w: warehouseList) {
+                            Product p = dao.getProductById(w.getProductId());
+                    %>
+                    <tr class='text-center text-dark font-weight-normal  '>
+                        <td><%=w.getId()%></td>
+                        <td><img width="50" height="50" class='cart_img' src='../DataWeb/<%=p.getImage()%>'> <%=" "%><%=p.getTitle()%></td>
+                        <td><%=w.getQuantity()%></td>
+                        <td><%=w.getTimestamp()%></td>
+                        <td><%=p.getPriceIn()+"/"+p.getUnitPrice()+p.getUnit()%></td>
+                        <td><%=p.getPrice()+"/"+p.getUnitPrice()+p.getUnit()%></td>
+                        <td><%=w.getQuantity()*Double.parseDouble(p.getPriceIn())%></td>
+                        <td><a href="" class='text-dark'><i class="bi bi-trash"></i></a></td>
+                        <%
+                            }
+                        %>
+                    </tr>
 
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-danger elevation-1"><i class="bi bi-box-seam"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Tổng Sản phẩm</span>
-                                <span class="info-box-number"><%=dao.CountProducts()%> </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clearfix hidden-md-up"></div>
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Số Đơn Hàng</span>
-                                <span class="info-box-number"><%=dao1.getOrderRowCount()%></span>
+                    </tbody>
+                </table>
 
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Số Khách hàng</span>
-                                <span class="info-box-number"><%=sumUser%></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-info">
-                            <div class="inner">
-                                <h3>15</h3>
-                                <p>Đơn hàng mới </p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-bag"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">Xem chi tiết <i class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-warning">
-                            <div class="inner">
-                                <h3>100</h3>
-
-                                <p>Người dùng đăng kí mới </p>
-                            </div>
-                            <div class="icon">
-                                <i class="fa-solid fa-person"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">Xem chi tiết <i class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-success">
-                            <div class="inner">
-                                <h3>53<sup style="font-size: 20px">%</sup></h3>
-                                <p>Thống kê lượt xem sản phẩm</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fa-solid fa-chart-simple"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">Xem chi tiết <i class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-
-
-                    <div class="card bg-gradient-info">
-                        <div class="card-header border-0">
-                            <h3 class="card-title">
-                                <i class="fas fa-th mr-1"></i>
-                                Thống kê doanh số
-                            </h3>
-
-                            <div class="card-tools">
-                                <button type="button" class="btn bg-info btn-sm" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn bg-info btn-sm" data-card-widget="remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <canvas class="chart" id="line-chart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                        </div>
-                        <div class="card-footer bg-transparent">
-                            <div class="row">
-                                <div class="col-4 text-center">
-
-                                    <div class="text-white">Đơn bị huỷ</div>
-                                </div>
-                                <div class="col-4 text-center">
-                                    <div class="text-white">Lượt mua hàng</div>
-                                </div>
-                                <div class="col-4 text-center">
-                                    <div class="text-white">Tồn kho</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
             </div>
         </section>
     </div>

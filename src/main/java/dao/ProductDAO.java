@@ -22,20 +22,21 @@ public class ProductDAO {
 
     public boolean addProduct(Product p) {
         boolean isAdd = false;
-        query = "insert into products(title,image,price,unit,categoryId,keyword,status,insertDate,quantity,unitPrice,descrip) " +
+        query = "insert into products(title,image,price,price_in,unit,categoryId,keyword,status,insertDate,quantity,unitPrice,descrip) " +
                 "values(?,?,?,?,?,?,?,NOW(),?,?,?)";
         try {
             ps = con.prepareStatement(query);
             ps.setString(1,p.getTitle());
             ps.setString(2,p.getImage());
             ps.setString(3,p.getPrice());
-            ps.setString(4,p.getUnit());
-            ps.setString(5,p.getCategoryId());
-            ps.setString(6,p.getKeyword());
-            ps.setString(7,p.getStatus());
-            ps.setString(8,p.getQuantity());
-            ps.setString(9,p.getUnitPrice());
-            ps.setString(10,p.getDescription());
+            ps.setString(4,p.getPriceIn());
+            ps.setString(5,p.getUnit());
+            ps.setString(6,p.getCategoryId());
+            ps.setString(7,p.getKeyword());
+            ps.setString(8,p.getStatus());
+            ps.setString(9,p.getQuantity());
+            ps.setString(10,p.getUnitPrice());
+            ps.setString(11,p.getDescription());
             int i = ps.executeUpdate();
 
             isAdd = i == 1;
@@ -81,7 +82,7 @@ public class ProductDAO {
     public List<Product> getAllProduct() {
         List<Product> products = new ArrayList<>();
         Product p = null;
-        query = "SELECT id, title, image, price, discount, unit, categoryId, keyword, status, insertDate, quantity, unitPrice, descrip FROM products";
+        query = "SELECT id, title, image, price,price_in, discount, unit, categoryId, keyword, status, insertDate, quantity, unitPrice, descrip FROM products";
         try {
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
@@ -91,15 +92,16 @@ public class ProductDAO {
                 p.setTitle(rs.getString(2));
                 p.setImage(rs.getString(3));
                 p.setPrice(rs.getString(4));
-                p.setDiscount(rs.getInt(5));
-                p.setUnit(rs.getString(6));
-                p.setCategoryId(rs.getString(7));
-                p.setKeyword(rs.getString(8));
-                p.setStatus(rs.getString(9));
-                p.setDateInsert(rs.getTimestamp(10));
-                p.setQuantity(rs.getString(11));
-                p.setUnitPrice(rs.getString(12));
-                p.setDescription(rs.getString(13));
+                p.setPriceIn(rs.getString(5));
+                p.setDiscount(rs.getInt(6));
+                p.setUnit(rs.getString(7));
+                p.setCategoryId(rs.getString(8));
+                p.setKeyword(rs.getString(9));
+                p.setStatus(rs.getString(10));
+                p.setDateInsert(rs.getTimestamp(11));
+                p.setQuantity(rs.getString(12));
+                p.setUnitPrice(rs.getString(13));
+                p.setDescription(rs.getString(14));
 
                 products.add(p);
             }
@@ -145,7 +147,7 @@ public class ProductDAO {
 
     public Product getProductById(int id) {
         Product product = null;
-        query = "SELECT id, title, image,price, discount , unit, categoryId, keyword, status, insertDate, quantity, unitPrice, descrip FROM products WHERE id = ?";
+        query = "SELECT id, title, image, price, price_in, discount, unit, categoryId, keyword, status, insertDate, quantity, unitPrice, descrip FROM products WHERE id = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setInt(1, id);
@@ -156,16 +158,16 @@ public class ProductDAO {
                 product.setTitle(rs.getString(2));
                 product.setImage(rs.getString(3));
                 product.setPrice(rs.getString(4));
-                product.setDiscount(rs.getInt(5));
-                product.setUnit(rs.getString(6));
-                product.setCategoryId(rs.getString(7));
-                product.setKeyword(rs.getString(8));
-                product.setStatus(rs.getString(9));
-                product.setDateInsert(rs.getTimestamp(10));
-                product.setQuantity(rs.getString(11));
-                product.setUnitPrice(rs.getString(12));
-                product.setDescription(rs.getString(13));
-
+                product.setPriceIn(rs.getString(5));
+                product.setDiscount(rs.getInt(6));
+                product.setUnit(rs.getString(7));
+                product.setCategoryId(rs.getString(8));
+                product.setKeyword(rs.getString(9));
+                product.setStatus(rs.getString(10));
+                product.setDateInsert(rs.getTimestamp(11));
+                product.setQuantity(rs.getString(12));
+                product.setUnitPrice(rs.getString(13));
+                product.setDescription(rs.getString(14));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -174,20 +176,22 @@ public class ProductDAO {
     }
 
 
+
     public boolean updateProduct(Product p) {
         boolean isUpdate = false;
-        query = "UPDATE products SET title = ?, price = ?, unit = ?, categoryId = ?, keyword = ?, quantity = ?, unitPrice = ?, descrip = ? WHERE id = ?";
+        query = "UPDATE products SET title = ?, price = ?, price_in = ?, unit = ?, categoryId = ?, keyword = ?, quantity = ?, unitPrice = ?, descrip = ? WHERE id = ?";
         try {
             ps = con.prepareStatement(query);
             ps.setString(1,p.getTitle());
             ps.setString(2,p.getPrice());
-            ps.setString(3,p.getUnit());
-            ps.setString(4,p.getCategoryId());
-            ps.setString(5,p.getKeyword());
-            ps.setString(6,p.getQuantity());
-            ps.setString(7,p.getUnitPrice());
-            ps.setString(8,p.getDescription());
-            ps.setInt(9,p.getId());
+            ps.setString(3,p.getPriceIn());
+            ps.setString(4,p.getUnit());
+            ps.setString(5,p.getCategoryId());
+            ps.setString(6,p.getKeyword());
+            ps.setString(7,p.getQuantity());
+            ps.setString(8,p.getUnitPrice());
+            ps.setString(9,p.getDescription());
+            ps.setInt(10,p.getId());
             int i = ps.executeUpdate();
             isUpdate = i == 1;
         } catch (SQLException e) {
@@ -195,6 +199,7 @@ public class ProductDAO {
         }
         return isUpdate;
     }
+
 
     public boolean deleteProduct(int id) {
         boolean isDelete = false;
@@ -211,7 +216,7 @@ public class ProductDAO {
     }
     public List<Product> getProductsByCategory(String categoryId) {
         List<Product> products = new ArrayList<>();
-        query = "SELECT id, title, image, price, discount,unit, categoryId, keyword, status, insertDate, quantity, unitPrice, descrip FROM products WHERE categoryId = ?";
+        query = "SELECT id, title, image, price, price_in, discount, unit, categoryId, keyword, status, insertDate, quantity, unitPrice, descrip FROM products WHERE categoryId = ?";
         try (PreparedStatement ps = con.prepareStatement(query)) {
             ps.setString(1, categoryId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -221,16 +226,16 @@ public class ProductDAO {
                     product.setTitle(rs.getString(2));
                     product.setImage(rs.getString(3));
                     product.setPrice(rs.getString(4));
-                    product.setDiscount((rs.getInt(5)));
-                    product.setUnit(rs.getString(6));
-                    product.setCategoryId(rs.getString(7));
-                    product.setKeyword(rs.getString(8));
-                    product.setStatus(rs.getString(9));
-                    product.setDateInsert(rs.getTimestamp(10));
-                    product.setQuantity(rs.getString(11));
-                    product.setUnitPrice(rs.getString(12));
-                    product.setDescription(rs.getString(13));
-
+                    product.setPriceIn(rs.getString(5));
+                    product.setDiscount((rs.getInt(6)));
+                    product.setUnit(rs.getString(7));
+                    product.setCategoryId(rs.getString(8));
+                    product.setKeyword(rs.getString(9));
+                    product.setStatus(rs.getString(10));
+                    product.setDateInsert(rs.getTimestamp(11));
+                    product.setQuantity(rs.getString(12));
+                    product.setUnitPrice(rs.getString(13));
+                    product.setDescription(rs.getString(14));
                     products.add(product);
                 }
             }
@@ -239,6 +244,7 @@ public class ProductDAO {
         }
         return products;
     }
+
 
 
     public static void main(String[] args) {

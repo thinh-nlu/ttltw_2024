@@ -143,6 +143,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="warehouse.jsp" class="nav-link">
+                            <i class="bi bi-boxes"></i>
+                            <p>Quản lí kho </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="list-products.jsp" class="nav-link">
                             <i class="bi bi-bar-chart-line"></i>
                             <p>Thống kê doanh số</p>

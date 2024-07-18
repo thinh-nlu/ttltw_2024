@@ -8,6 +8,7 @@ public class Product {
     private int id;
     private String title;
     private String price;
+    private String priceIn;
 
     private int discount;
     private String unit;
@@ -78,6 +79,44 @@ public class Product {
         this.quantity = quantity;
         this.status = status;
         this.unitPrice = unitPrice;
+    }
+
+    public Product(int id, String title, String price, String priceIn, String unit, String image, String categoryId, String keyword, Timestamp timestamp, String quantity, String status, String unitPrice, String descript) {
+        this.id = id;
+        this.title = title;
+        this.price = price;
+        this.priceIn = priceIn;
+        this.unit = unit;
+        this.image = image;
+        this.categoryId = categoryId;
+        this.keyword = keyword;
+        this.timestamp = timestamp;
+        this.quantity = quantity;
+        this.status = status;
+        this.unitPrice = unitPrice;
+        this.descript = descript;
+    }
+
+    public Product(String title, String price, String priceIn, String unit, String image, String categoryId, String keyword, String quantity, String status, String unitPrice, String descript) {
+        this.title = title;
+        this.price = price;
+        this.priceIn = priceIn;
+        this.unit = unit;
+        this.image = image;
+        this.categoryId = categoryId;
+        this.keyword = keyword;
+        this.quantity = quantity;
+        this.status = status;
+        this.unitPrice = unitPrice;
+        this.descript = descript;
+    }
+
+    public String getPriceIn() {
+        return priceIn;
+    }
+
+    public void setPriceIn(String priceIn) {
+        this.priceIn = priceIn;
     }
 
     public int getDiscount() {
