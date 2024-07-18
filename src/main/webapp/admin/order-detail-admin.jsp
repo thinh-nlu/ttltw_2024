@@ -1,16 +1,20 @@
-<%@ page import="model.User" %>
 <%@ page import="dao.ProductDAO" %>
 <%@ page import="database.DBConnect" %>
 <%@ page import="dao.OrderDAO" %>
 <%@ page import="dao.UserDAO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="dao.AddressDAO" %>
+<%@ page import="model.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored = "false" %>
 <%
     User user = (User) session.getAttribute("success");
     ProductDAO dao = new ProductDAO(DBConnect.getConnection());
-    OrderDAO dao1 = new OrderDAO(DBConnect.getConnection());
-    UserDAO dao2 = new UserDAO(DBConnect.getConnection());
-    int sumUser = dao2.getUserCount();
+    List<OrderDetail> list = (List<OrderDetail>) session.getAttribute("orderDetail");
+    OrderDAO orderDAO = new OrderDAO(DBConnect.getConnection());
+    AddressDAO addressDAO = new AddressDAO(DBConnect.getConnection());
+
+
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -202,96 +206,73 @@
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">TRANG QUẢN LÍ</h1>
+                    </div>
+                </div>
             </div>
         </div>
         <section class="content">
-            <div class="container mt-3">
-                <h1 class="text-center">Thêm sản phẩm</h1>
-                <!-- form -->
-                <form action="../add_product" method="post" enctype="multipart/form-data">
-                    <!-- title -->
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_title" class="form-label">Tên sản phẩm</label>
-                        <input type="text" name="product_title" id="product_title" class="form-control"
-                               placeholder="Nhập sản phẩm" autocomplete="off" required="required">
-                    </div>
-
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="unit" class="form-label">Đơn vị</label>
-                        <select class="form-control" id="unit" name="unit" required="required">
-                            <option value="kg">Kg</option>
-                            <option value="g">g</option>
-                        </select>
-
-                    </div>
-                    <!-- price -->
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_price" class="form-label">Giá bán ra</label>
-                        <input type="number" name="product_price" id="product_price" class="form-control"
-                               placeholder="Nhập giá sản phẩm" autocomplete="off" required="required">
-                    </div>
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_price_in" class="form-label">Giá nhập vào</label>
-                        <input type="number" name="product_price_in" id="product_price_in" class="form-control"
-                               placeholder="Nhập giá sản phẩm" autocomplete="off" required="required">
-                    </div>
-                    <!-- keywords -->
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_keyword" class="form-label">Từ khóa</label>
-                        <input type="text" name="product_keyword" id="product_keyword" class="form-control"
-                               placeholder="Nhập từ khóa" autocomplete="off" required="required">
-                    </div>
-
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="quantity" class="form-label">Số lượng</label>
-                        <input type="number" name="quantity" id="quantity" class="form-control"
-                               placeholder="Nhập số lượng" autocomplete="off" required="required">
-                    </div>
-
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_category" class="form-label">Loại</label>
-                        <select class="form-control" id="product_category" name="product_category" required="required">
-                            <option value="rau">Rau</option>
-                            <option value="cu">Củ</option>
-                            <option value="hat">Hạt</option>
-                            <option value="qua">Quả</option>
-                        </select>
-                    </div>
-
-                    <!-- image -->
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_image" class="form-label">Hình ảnh sản phẩm</label>
-                        <input type="file" name="product_image" id="product_image" class="form-control"
-                               required="required">
-                    </div>
-
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="unit_price" class="form-label">Đơn Giá</label>
-                        <input type="number" name="unit_price" id="unit_price" class="form-control"
-                               required="required">
-                    </div>
-
-                    <div class="form-outline mb-4 w-50 m-auto">
-                        <label for="product_descrip" class="form-label">Mô tả sản phẩm</label>
-                        <input type="text" name="product_descrip" id="product_descrip" class="form-control"
-                               required="required">
-                    </div>
-
-
-                    <!-- submit button -->
-                    <div class="form-outline mb-4 w-50 m-auto pt-2">
-                        <input type="submit" name="insert_product" class="btn btn-info mb-3 px-3" value="Thêm sản phẩm">
-                    </div>
-                </form>
-            </div>
-
+            <h3 class="text-center text-dark pb-3 display-4 font-weight-normal" >Chi tiết đơn hàng</h3>
+            <table id="dataTable" class="table table-striped text-center  ">
+                <thead class="bg-dark">
+                <tr class="text-light">
+                    <th>STT</th>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Tổng tiền</th>
+                </tr>
+                </thead>
+                <tbody class="bg-light text-dark">
+                <%
+                    int count = 0;
+                    for(OrderDetail o: list) {
+                        Product p = dao.getProductById(o.getProductId());
+                        count ++;
+                %>
+                <tr class='text-center text-dark font-weight-normal  '>
+                    <td><%=count%></td>
+                    <td><img width="50" height="50" class='cart_img' src='../DataWeb/<%=p.getImage()%>'> <%=" "%><%=p.getTitle()%></td>
+                    <td><%=o.getQuantity()%></td>
+                    <td><%=o.getQuantity() * Double.valueOf(p.getPrice())%><%=" Đồng"%></td>
+                </tr>
+                <%}%>
+                </tbody>
+            </table>
 
         </section>
     </div>
+    <script>
+        new DataTable('#dataTable', {
+            language: {
+                processing: "Đang tải dữ liệu",
+                search: "Tìm kiếm",
+                lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
+                info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
+                loadingRecords: "",
+                zeroRecords: "Không có tìm kiếm phù hợp",
+                emptyTable: "Không có dữ liệu",
+                paginate: {
+                    first: "Trang đầu",
+                    previous: "Trang trước",
+                    next: "Trang sau",
+                    last: "Trang cuối"
+                },
+                aria: {
+                    sortAscending: "sắp xếp tăng dần",
+                    sortDescending: "sắp xếp giảm dần",
+                }
+            },
+        });
+    </script>
 
 </div>
 
 <!-- REQUIRED SCRIPTS -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.0.5/js/dataTables.js"></script>
+<link href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css" rel="stylesheet">
 <script src="../js/jquery.min.js"></script>
 <script src="../js/bootstrap.bundle.min.js"></script>
 <script src="../js/jquery.overlayScrollbars.min.js"></script>
