@@ -198,7 +198,7 @@
                         <div class="title-left">
                             <h3>Địa chỉ giao hàng</h3>
                         </div>
-                        <form class="needs-validation" novalidate action="../newAddress" method="post">
+                        <form class="needs-validation" novalidate action="../newAddress" method="post" onsubmit="return validateForm()">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="firstName">Họ *</label>
@@ -352,6 +352,23 @@
     <a href="#" id="back-to-top" title="Back to top" style="display: none;"><i class="bi-arrow-up-short"></i></a>
 
     <!-- ALL JS FILES -->
+
+<script>
+    function validateForm() {
+        var firstName = document.getElementById('firstName').value.trim();
+        var lastName = document.getElementById('lastName').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var contact = document.getElementById('contact').value.trim();
+        var address = document.getElementById('address').value.trim();
+
+        if (!firstName || !lastName || !email || !contact || !address) {
+            alert('Vui lòng điền đầy đủ thông tin.');
+            return false;
+        }
+
+        return true;
+    }
+</script>
     <script src="../js/jquery-3.2.1.min.js"></script>
     <script src="../js/popper.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>

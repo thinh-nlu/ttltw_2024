@@ -227,110 +227,29 @@
                     </div>
                 </div>
             </div>
-<%--            <div class="row">--%>
-<%--                <div class="col-lg-12">--%>
-<%--                    <div class="special-menu text-center">--%>
-<%--                        <div class="button-group filter-button-group">--%>
-<%--                            <a href="${pageContext.request.contextPath}/gallery.jsp">--%>
-<%--                                <button class="btn btn-filter">Tất cả</button>--%>
-<%--                            </a>--%>
-<%--                            <a href="${pageContext.request.contextPath}/filterProduct?categoryId=hat">--%>
-<%--                                <button class="btn btn-filter">Hạt</button>--%>
-<%--                            </a>--%>
-<%--                            <a href="${pageContext.request.contextPath}/filterProduct?categoryId=qua">--%>
-<%--                                <button class="btn btn-filter">Trái cây</button>--%>
-<%--                            </a>--%>
-<%--                            <a href="${pageContext.request.contextPath}/filterProduct?categoryId=rau">--%>
-<%--                                <button class="btn btn-filter" >Rau</button>--%>
-<%--                            </a>--%>
-<%--                            <a href="${pageContext.request.contextPath}/filterProduct?categoryId=cu">--%>
-<%--                                <button class="btn btn-filter" >Củ</button>--%>
-<%--                            </a>--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-<%--                </div>--%>
-<%--            </div>--%>
-
-<%--            <div class="row">--%>
-<%--                <div class="col-lg-12">--%>
-<%--                    <div class="special-menu text-center">--%>
-<%--                        <div class="button-group filter-button-group">--%>
-<%--                            <!-- Thanh điều chỉnh giá sản phẩm -->--%>
-<%--                            <input type="range" id="priceRange" name="priceRange" min="0" max="1000000" step="10000">--%>
-
-<%--                            --%>
-
-<%--                            <input type="checkbox" id="bestSeller" name="bestSeller">--%>
-<%--                            <label for="bestSeller">Hàng bán chạy</label>--%>
-
-<%--                            <input type="checkbox" id="promotions" name="promotions">--%>
-<%--                            <label for="promotions">Khuyến mãi</label>--%>
-
-<%--                            <input type="checkbox" id="vegetable" name="vegetable">--%>
-<%--                            <label for="vegetable">Rau</label>--%>
-
-<%--                            <input type="checkbox" id="root" name="root">--%>
-<%--                            <label for="root">Củ</label>--%>
-
-<%--                            <input type="checkbox" id="fruitSeed" name="fruitSeed">--%>
-<%--                            <label for="fruitSeed">Quả hạt</label>--%>
 
 
-<%--                        </div>--%>
-<%--                    </div>--%>
-<%--                </div>--%>
-
-<%--            </div>--%>
-            <script>
-                function filterProducts(categoryId) {
-                    $.ajax({
-                        type: "GET",
-                        url: "filterProduct",
-                        data: {categoryId: categoryId},
-                        dataType: "json",
-                        success: function (response) {
-
-                            var products = response;
-
-                            var productHtml = "";
-                            for (var i = 0; i < products.length; i++) {
-                                var product = products[i];
-                                productHtml += '<div class="col-lg-3 col-md-6 special-grid bulbs">' +
-                                    '    <div class="products-single fix">' +
-                                    '        <div class="box-img-hover">' +
-                                    '            <img src="./DataWeb/' + product.image + '" class="img-fluid" alt="Image">' +
-                                    '            <div class="mask-icon">' +
-                                    '                <ul>' +
-                                    '                    <li><a href="${pageContext.request.contextPath }/product-detail?id=' + product.id + '" data-toggle="tooltip" data-placement="right" title="Chi tiết sản phẩm"><i class="fas fa-eye"></i></a></li>' +
-                                    '                    <li><a href="${pageContext.request.contextPath}/add_wishlist?productId=' + product.id + '" data-toggle="tooltip" data-placement="right" title="Thêm vào danh sách yêu thích"><i class="far fa-heart"></i></a></li>' +
-                                    '                </ul>' +
-                                    '                <a class="cart" href="${pageContext.request.contextPath}/add_cart?id=' + product.id + '">Thêm vào giỏ hàng</a>' +
-                                    '            </div>' +
-                                    '        </div>' +
-                                    '        <div class="why-text">' +
-                                    '            <h4>' + product.title + ' - ' + product.unitPrice + product.unit + '</h4>' +
-                                    '            <h5>' + product.price + 'đ</h5>' +
-                                    '        </div>' +
-                                    '    </div>' +
-                                    '</div>';
-                            }
-                            // Thay đổi nội dung của special-list với HTML mới
-                            $(".special-list").html(productHtml);
-                        }
-                    });
-                }
-            </script>
 
 
             <div class="row">
                 <div class="col-lg-12">
                     <div class="special-menu text-center">
                         <div class="button-group filter-button-group">
-                            <!-- Các nút filter -->
-                            <button class="btn btn-filter" onclick="filterProducts('hat')">Hạt</button>
-                            <button class="btn btn-filter" onclick="filterProducts('qua')">Trái cây</button>
-                            <button class="btn btn-filter" onclick="filterProducts('rau')">Rau</button>
-                            <button class="btn btn-filter" onclick="filterProducts('cu')">Củ</button>
+                            <a href="${pageContext.request.contextPath}/gallery.jsp">
+                                <button class="btn btn-filter">Tất cả</button>
+                            </a>
+                            <a href="${pageContext.request.contextPath}/filterProduct?categoryId=hat">
+                                <button class="btn btn-filter">Hạt</button>
+                            </a>
+                            <a href="${pageContext.request.contextPath}/filterProduct?categoryId=qua">
+                                <button class="btn btn-filter">Trái cây</button>
+                            </a>
+                            <a href="${pageContext.request.contextPath}/filterProduct?categoryId=rau">
+                                <button class="btn btn-filter" >Rau</button>
+                            </a>
+                            <a href="${pageContext.request.contextPath}/filterProduct?categoryId=cu">
+                                <button class="btn btn-filter" >Củ</button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -340,40 +259,6 @@
             <div class="row special-list" id="productContainer">
                 <!-- Nội dung danh sách sản phẩm sẽ được thay đổi bằng Ajax -->
             </div>
-
-            <script>
-                $(document).ready(function() {
-                    $('.btn-filter').click(function() {
-                        var categoryId = $(this).data('category-id');
-                        filterProducts(categoryId);
-                    });
-                });
-
-                function filterProducts(categoryId) {
-                    $.ajax({
-                        url: '${pageContext.request.contextPath}/filterProduct',
-                        type: 'GET',
-                        data: {categoryId: categoryId},
-                        success: function(products) {
-                            displayProducts(products);
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        }
-                    });
-                }
-
-                function displayProducts(products) {
-                    var productContainer = $('#product-container');
-                    productContainer.empty(); // Xóa nội dung hiện tại
-
-                    $.each(products, function(index, product) {
-
-                        var productElement = $('<div>').text(product.name);
-                        productContainer.append(productElement);
-                    });
-                }
-            </script>
 
 
             <div class="row special-list">
@@ -394,8 +279,29 @@
                             </div>
                         </div>
                         <div class="why-text">
-                            <h4><%=p1.getTitle()+" - "+p1.getUnitPrice()+p1.getUnit()%></h4>
-                            <h5><%=p1.getPrice()+ "đ"%> </h5>
+                            <h4><%= p1.getTitle() + " - " + p1.getUnitPrice() + p1.getUnit() %></h4>
+                            <%
+                                String price = p1.getPrice();
+                                DecimalFormat formatter = new DecimalFormat("#,###");
+                                double originalPrice = Double.parseDouble(price.split("\\.")[0]);
+                                String formattedPrice = formatter.format(originalPrice);
+                                int discount = p1.getDiscount();
+                                double discountedPrice = originalPrice - (originalPrice * discount / 100.0);
+                                String formattedDiscountedPrice = formatter.format(discountedPrice);
+                            %>
+                            <div class="flex-row">
+                                <% if (discount != 0) { %>
+                                <s class="h5"><span><%= formattedPrice %>đ</span></s>
+                                <span class="ml-3 bg-danger text-light h6 bg-gradient-danger">-<%= discount %>%</span>
+                                <% } %>
+                            </div>
+                            <h5 class="text-dark">
+                                <% if (discount != 0) { %>
+                                <%= formattedDiscountedPrice %>đ /<%= p1.getUnitPrice() %><%= p1.getUnit() %>
+                                <% } else { %>
+                                <%= formattedPrice %>đ / <%= p1.getUnitPrice() %><%= p1.getUnit() %>
+                                <% } %>
+                            </h5>
                         </div>
                     </div>
                 </div>
