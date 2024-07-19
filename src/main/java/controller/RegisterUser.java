@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.IPAddressUtil;
 import model.User;
 
 import javax.mail.*;
@@ -38,9 +39,10 @@ public class RegisterUser extends HttpServlet {
         String rePass = req.getParameter("re_pass").trim();
         String contact = req.getParameter("contact").trim();
         String address = req.getParameter("address").trim();
+        String ip = IPAddressUtil.getPublicIPAddress();
         String hashPassword = hashPassword(password);
 
-        User user = new User(username,email,hashPassword,contact,"1","1",address,"27.2.16.228");
+        User user = new User(username,email,hashPassword,contact,"1","1",address,ip);
         HttpSession session = req.getSession();
         UserDAO dao = new UserDAO(DBConnect.getConnection());
         List<User> users = dao.getAllUser();

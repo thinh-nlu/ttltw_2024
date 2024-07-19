@@ -368,53 +368,84 @@
                             window.location.href = selectedOption;
                         }
                     }
-                    new DataTable('#dataTable', {
-                        language: {
-                            processing: "Đang tải dữ liệu",
-                            search: "Tìm kiếm",
-                            lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
-                            info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
-                            loadingRecords: "",
-                            zeroRecords: "Không có tìm kiếm phù hợp",
-                            emptyTable: "Không có dữ liệu",
-                            paginate: {
-                                first: "Trang đầu",
-                                previous: "Trang trước",
-                                next: "Trang sau",
-                                last: "Trang cuối"
-                            },
-                            aria: {
-                                sortAscending: "sắp xếp tăng dần",
-                                sortDescending: "sắp xếp giảm dần",
-                            }
-                        },
-                        columnDefs: [
-                            { orderable: false, targets: [ 7, 8] } // Chỉ định các cột cần tắt sắp xếp, chỉ số cột bắt đầu từ 0
-                        ],
-                        layout: {
-                            bottomEnd: {
-                                paging: {
-                                    boundaryNumbers: false
-                                }
-                            }
-                        }
-                    });
+                    // new DataTable('#dataTable', {
+                    //     language: {
+                    //         processing: "Đang tải dữ liệu",
+                    //         search: "Tìm kiếm",
+                    //         lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
+                    //         info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
+                    //         loadingRecords: "",
+                    //         zeroRecords: "Không có tìm kiếm phù hợp",
+                    //         emptyTable: "Không có dữ liệu",
+                    //         paginate: {
+                    //             first: "Trang đầu",
+                    //             previous: "Trang trước",
+                    //             next: "Trang sau",
+                    //             last: "Trang cuối"
+                    //         },
+                    //         aria: {
+                    //             sortAscending: "sắp xếp tăng dần",
+                    //             sortDescending: "sắp xếp giảm dần",
+                    //         }
+                    //     },
+                    //     columnDefs: [
+                    //         { orderable: false, targets: [ 7, 8] } // Chỉ định các cột cần tắt sắp xếp, chỉ số cột bắt đầu từ 0
+                    //     ],
+                    //     layout: {
+                    //         bottomEnd: {
+                    //             paging: {
+                    //                 boundaryNumbers: false
+                    //             }
+                    //         }
+                    //     }
+                    // });
                 </script>
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const selectAllButton = document.getElementById('select-all');
                         const deleteOrdersButton = document.getElementById('delete-logs');
-                        const checkboxes = document.querySelectorAll('.order-checkbox');
+                        const dataTable = new DataTable('#dataTable', {
+                            language: {
+                                processing: "Đang tải dữ liệu",
+                                search: "Tìm kiếm",
+                                lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
+                                info: "Bản ghi từ _START_ đến _END_ Tổng cộng _TOTAL_ bản ghi",
+                                loadingRecords: "",
+                                zeroRecords: "Không có tìm kiếm phù hợp",
+                                emptyTable: "Không có dữ liệu",
+                                paginate: {
+                                    first: "Trang đầu",
+                                    previous: "Trang trước",
+                                    next: "Trang sau",
+                                    last: "Trang cuối"
+                                },
+                                aria: {
+                                    sortAscending: "sắp xếp tăng dần",
+                                    sortDescending: "sắp xếp giảm dần",
+                                }
+                            },
+                            columnDefs: [
+                                { orderable: false, targets: [0, 7, 8] } // Chỉ định các cột cần tắt sắp xếp, chỉ số cột bắt đầu từ 0
+                            ],
+                            layout: {
+                                bottomEnd: {
+                                    paging: {
+                                        boundaryNumbers: false
+                                    }
+                                }
+                            }
+                        });
 
                         selectAllButton.addEventListener('click', function() {
-                            checkboxes.forEach(checkbox => {
-                                checkbox.checked = !checkbox.checked;
+                            const allCheckboxes = dataTable.$('.order-checkbox');
+                            const allChecked = Array.from(allCheckboxes).every(checkbox => checkbox.checked);
+                            allCheckboxes.each(function() {
+                                this.checked = !allChecked;
                             });
                         });
 
                         deleteOrdersButton.addEventListener('click', function() {
-                            const selectedOrderIds = Array.from(checkboxes)
-                                .filter(checkbox => checkbox.checked)
+                            const selectedOrderIds = Array.from(dataTable.$('.order-checkbox:checked'))
                                 .map(checkbox => checkbox.value);
 
                             if (selectedOrderIds.length > 0) {
@@ -433,7 +464,6 @@
 
                                     document.body.appendChild(form);
                                     form.submit();
-
                                 }
                             } else {
                                 alert('Vui lòng chọn ít nhất một log để xóa.');
@@ -441,6 +471,7 @@
                         });
                     });
                 </script>
+
 
 
 
