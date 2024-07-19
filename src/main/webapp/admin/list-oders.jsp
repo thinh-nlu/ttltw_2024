@@ -11,6 +11,7 @@
     if(cartProduct == null) cartProduct = new CartProduct();
     User user = (User) session.getAttribute("success");
     List<Order> orderList = new ArrayList<>();
+    List<Order> oderPaidList = new ArrayList<>();
     OrderDAO dao = new OrderDAO(DBConnect.getConnection());
     UserDAO userDAO = new UserDAO(DBConnect.getConnection());
     if(user!=null) orderList = dao.getAllOrder();
@@ -349,76 +350,89 @@
         </section>
     </div>
     <script>
-        new DataTable('#dataTable', {
-            language: {
-                processing: "Đang tải dữ liệu",
-                search: "Tìm kiếm",
-                lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
-                info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
-                loadingRecords: "",
-                zeroRecords: "Không có tìm kiếm phù hợp",
-                emptyTable: "Không có dữ liệu",
-                paginate: {
-                    first: "Trang đầu",
-                    previous: "Trang trước",
-                    next: "Trang sau",
-                    last: "Trang cuối"
+        document.addEventListener('DOMContentLoaded', function() {
+            let table = new DataTable('#dataTable', {
+                language: {
+                    processing: "Đang tải dữ liệu",
+                    search: "Tìm kiếm",
+                    lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
+                    info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
+                    loadingRecords: "",
+                    zeroRecords: "Không có tìm kiếm phù hợp",
+                    emptyTable: "Không có dữ liệu",
+                    paginate: {
+                        first: "Trang đầu",
+                        previous: "Trang trước",
+                        next: "Trang sau",
+                        last: "Trang cuối"
+                    },
+                    aria: {
+                        sortAscending: "sắp xếp tăng dần",
+                        sortDescending: "sắp xếp giảm dần",
+                    }
                 },
-                aria: {
-                    sortAscending: "sắp xếp tăng dần",
-                    sortDescending: "sắp xếp giảm dần",
+                columnDefs: [
+                    { orderable: false, targets: -1 } // Tắt sắp xếp cho cột cuối cùng
+                ]
+            });
+
+            function updateSelectAllButtonState() {
+                const checkboxes = table.$('.order-checkbox');
+                const selectAllButton = document.getElementById('select-all');
+
+                let allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                selectAllButton.textContent = allChecked ? 'Bỏ chọn tất cả' : 'Chọn tất cả';
+            }
+
+            document.getElementById('select-all').addEventListener('click', function() {
+                const checkboxes = table.$('.order-checkbox');
+                const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                checkboxes.each(function() {
+                    this.checked = !allChecked;
+                });
+                updateSelectAllButtonState();
+            });
+
+            document.getElementById('delete-orders').addEventListener('click', function() {
+                const selectedOrderIds = Array.from(table.$('.order-checkbox:checked')).map(checkbox => checkbox.value);
+
+                if (selectedOrderIds.length > 0) {
+                    if (confirm('Bạn có chắc chắn muốn xóa các hóa đơn này không?')) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '${pageContext.request.contextPath}/deleteOrders';
+
+                        selectedOrderIds.forEach(orderId => {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'orderIds';
+                            input.value = orderId;
+                            form.appendChild(input);
+                        });
+
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                } else {
+                    alert('Vui lòng chọn ít nhất một đơn hàng để xóa.');
                 }
-            },
+            });
+
+            table.on('draw', function() {
+                updateSelectAllButtonState();
+
+                document.querySelectorAll('.order-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', updateSelectAllButtonState);
+                });
+            });
+
+            updateSelectAllButtonState();
         });
     </script>
 
-</div>
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.0.5/js/dataTables.js"></script>
 <link href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css" rel="stylesheet">
-
-<!-- REQUIRED SCRIPTS -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const selectAllButton = document.getElementById('select-all');
-        const deleteOrdersButton = document.getElementById('delete-orders');
-        const checkboxes = document.querySelectorAll('.order-checkbox');
-
-        selectAllButton.addEventListener('click', function() {
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = !checkbox.checked;
-            });
-        });
-
-        deleteOrdersButton.addEventListener('click', function() {
-            const selectedOrderIds = Array.from(checkboxes)
-                .filter(checkbox => checkbox.checked)
-                .map(checkbox => checkbox.value);
-
-            if (selectedOrderIds.length > 0) {
-                if (confirm('Bạn có chắc chắn muốn xóa các hóa đơn này không?')) {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '${pageContext.request.contextPath}/deleteOrders';
-
-                    selectedOrderIds.forEach(orderId => {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = 'orderIds';
-                        input.value = orderId;
-                        form.appendChild(input);
-                    });
-
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            } else {
-                alert('Vui lòng chọn ít nhất một đơn hàng để xóa.');
-            }
-        });
-    });
-</script>
-
 <script src="../js/jquery.min.js"></script>
 <script src="../js/bootstrap.bundle.min.js"></script>
 <script src="../js/jquery.overlayScrollbars.min.js"></script>

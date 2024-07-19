@@ -283,73 +283,93 @@
 
 </div>
 <script>
-    document.getElementById('select-all').addEventListener('click', function () {
-        const checkboxes = document.querySelectorAll('.order-checkbox');
-        checkboxes.forEach(checkbox => checkbox.checked = !checkbox.checked);
-        updateSelectAllButtonState();
-    });
-
-    function updateSelectAllButtonState() {
-        const checkboxes = document.querySelectorAll('.order-checkbox');
-        const selectAllButton = document.getElementById('select-all');
-
-        let allChecked = true;
-        checkboxes.forEach(checkbox => {
-            if (!checkbox.checked) {
-                allChecked = false;
-            }
-        });
-
-        if (allChecked && checkboxes.length > 0) {
-            selectAllButton.textContent = 'Bỏ chọn tất cả';
-        } else {
-            selectAllButton.textContent = 'Chọn tất cả';
-        }
-    }
-
     document.addEventListener('DOMContentLoaded', function () {
-        updateSelectAllButtonState();
-    });
+        const selectAllButton = document.getElementById('select-all');
+        const deleteSelectedButton = document.getElementById('delete-selected');
+        let table;
 
-    // Xử lý khi có checkbox thay đổi trạng thái
-    document.querySelectorAll('.order-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
+        function updateSelectAllButtonState() {
+            const checkboxes = document.querySelectorAll('.order-checkbox');
+            const selectAllButton = document.getElementById('select-all');
+
+            let allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+            if (allChecked && checkboxes.length > 0) {
+                selectAllButton.textContent = 'Bỏ chọn tất cả';
+            } else {
+                selectAllButton.textContent = 'Chọn tất cả';
+            }
+        }
+
+        selectAllButton.addEventListener('click', function () {
+            const checkboxes = table.$('.order-checkbox');
+            const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+            checkboxes.each(function () {
+                this.checked = !allChecked;
+            });
             updateSelectAllButtonState();
         });
-    });
 
-    // Xử lý khi nhấn nút "Xóa"
-    document.getElementById('delete-selected').addEventListener('click', function () {
-        document.getElementById('delete-form').submit();
-    });
-</script>
+        deleteSelectedButton.addEventListener('click', function () {
+            const selectedOrderIds = Array.from(table.$('.order-checkbox:checked')).map(checkbox => checkbox.value);
 
+            if (selectedOrderIds.length > 0) {
+                if (confirm('Bạn có chắc chắn muốn xóa các log này không?')) {
+                    const form = document.createElement('form');
+                    form.method = 'GET';
+                    form.action = '${pageContext.request.contextPath}/RemoveLogAdmin';
 
-<script>
-    new DataTable('#dataTable', {
-        language: {
-            processing: "Đang tải dữ liệu",
-            search: "Tìm kiếm",
-            lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
-            info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
-            loadingRecords: "",
-            zeroRecords: "Không có tìm kiếm phù hợp",
-            emptyTable: "Không có dữ liệu",
-            paginate: {
-                first: "Trang đầu",
-                previous: "Trang trước",
-                next: "Trang sau",
-                last: "Trang cuối"
-            },
+                    selectedOrderIds.forEach(orderId => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'id';
+                        input.value = orderId;
+                        form.appendChild(input);
+                    });
 
-            aria: {
-                sortAscending: "sắp xếp tăng dần",
-                sortDescending: "sắp xếp giảm dần",
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            } else {
+                alert('Vui lòng chọn ít nhất một log để xóa.');
             }
-        },
-        columnDefs: [
-            { orderable: false, targets: [ 7,8,9,10] } // Chỉ định các cột cần tắt sắp xếp, chỉ số cột bắt đầu từ 0
-        ],
+        });
+
+        table = new DataTable('#dataTable', {
+            language: {
+                processing: "Đang tải dữ liệu",
+                search: "Tìm kiếm",
+                lengthMenu: "Điều chỉnh số lượng bản ghi trên 1 trang _MENU_ ",
+                info: "Bản ghi từ _START_ đến _END_ Tổng công _TOTAL_ bản ghi",
+                loadingRecords: "",
+                zeroRecords: "Không có tìm kiếm phù hợp",
+                emptyTable: "Không có dữ liệu",
+                paginate: {
+                    first: "Trang đầu",
+                    previous: "Trang trước",
+                    next: "Trang sau",
+                    last: "Trang cuối"
+                },
+                aria: {
+                    sortAscending: "sắp xếp tăng dần",
+                    sortDescending: "sắp xếp giảm dần",
+                }
+            },
+            columnDefs: [
+                { orderable: false, targets: [7, 8, 9, 10] } // Chỉ định các cột cần tắt sắp xếp, chỉ số cột bắt đầu từ 0
+            ],
+        });
+
+        table.on('draw', function () {
+            updateSelectAllButtonState();
+
+            document.querySelectorAll('.order-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    updateSelectAllButtonState();
+                });
+            });
+        });
+
+        updateSelectAllButtonState();
     });
 </script>
 
