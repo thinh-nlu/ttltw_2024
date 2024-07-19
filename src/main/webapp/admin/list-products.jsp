@@ -129,21 +129,19 @@
                     <li class="nav-item">
                         <a href="insert-product.jsp" class="nav-link">
                             <i class="bi bi-plus-square"></i>
-                            <p>
-                                Thêm sản phẩm
-                            </p>
+                            <p>Thêm sản phẩm</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="list-products.jsp" class="nav-link">
                             <i class="bi bi-box-seam"></i>
-                            <p>Quản lí sản phẩm </p>
+                            <p>Quản lí sản phẩm</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="warehouse.jsp" class="nav-link">
                             <i class="bi bi-boxes"></i>
-                            <p>Quản lí kho </p>
+                            <p>Quản lí kho</p>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -153,47 +151,38 @@
                         </a>
                     </li>
 
+                    <%-- Conditionally render user management link based on isAdmin value --%>
+                    <% String isAdmin = user.getIsAdmin(); %>
                     <li class="nav-item">
+                        <% if ("0".equals(isAdmin)) { %>
                         <a href="list-user.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
                             <p>Quản lí người dùng</p>
                         </a>
+                        <% } else if ("3".equals(isAdmin)) { %>
+                        <a href="list_user_customer.jsp" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Quản lí người dùng</p>
+                        </a>
+                        <% } %>
                     </li>
 
+                    <%-- Other menu items --%>
                     <li class="nav-item">
                         <a href="list-oders.jsp" class="nav-link">
                             <i class="bi bi-basket"></i>
                             <p>Quản lí đơn hàng</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <p>Giám sát đơn hàng</p>
-                        </a>
-                    </li>
 
-                    <%-- Kiểm tra và ẩn menu nếu isAdmin là 3 --%>
-                    <%   String isAdmin = user.getIsAdmin();
-                        if (!isAdmin.equals("3")) { %>
-
-
-
-
+                    <%-- Hide specific menu items if isAdmin is 3 --%>
+                    <% if (!"3".equals(isAdmin)) { %>
                     <li class="nav-item">
                         <a href="edit_role.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
-                            <p>Quản lí quyền hạng</p>
+                            <p>Quản lí quyền hạn</p>
                         </a>
                     </li>
-
-                    <li class="nav-item">
-                        <a href="list-employee.jsp" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <p>Quản lí nhân viên</p>
-                        </a>
-                    </li>
-
                     <li class="nav-item">
                         <a href="list-log.jsp" class="nav-link">
                             <i class="bi bi-clipboard2-data-fill"></i>
@@ -208,10 +197,9 @@
                             <p>Khuyến mãi sản phẩm</p>
                         </a>
                     </li>
-
-
                 </ul>
             </nav>
+
         </div>
     </aside>
 
@@ -238,50 +226,105 @@
                 session.removeAttribute("updateProductMes");
             %>
             <div class="px-lg-5 pt-xl-1">
-                <table id="dataTable" class="table table-striped text-center ">
-                    <thead class="bg-dark">
-                    <tr class="text-light">
-                        <th>ID</th>
-                        <th>Tên sản phẩm </th>
-                        <th>Hình ảnh sản phẩm </th>
-                        <th>Giá nhập vào</th>
-                        <th>Giá bán ra</th>
-                        <th>Số lượng tồn kho</th>
-                        <th>Nhập thêm số lượng</th>
-                        <th>Chỉnh sửa</th>
-                        <th>Xóa</th>
-                    </tr>
-                    </thead>
-                    <tbody class="bg-light text-dark">
-                    <%
-                        for (Product p: allList) {
-                            if (p!=null) {
-                    %>
-                    <tr class='text-center text-dark font-weight-normal  '>
-                        <td><%=p.getId()%></td>
-                        <td><%=p.getTitle()%></td>
-                        <td><img width="50" height="50" class='cart_img' src='../DataWeb/<%=p.getImage()%>'></td>
-
-                        <td><%=p.getPriceIn()+"/"+p.getUnitPrice()+p.getUnit()%></td>
-                        <td><%=p.getPrice()+"/"+p.getUnitPrice()+p.getUnit()%></td>
-                        <td><%=p.getQuantity()%></td>
-                        <td><a href="add_product_quantity.jsp?id=<%=p.getId()%>" class='text-dark'><i class="bi bi-plus-square"></i></a></td>
-                        <td><a href="edit_products.jsp?id=<%=p.getId()%>" class='text-dark'><i class="bi bi-pencil-square"></i></a></td>
-                        <td><a href="../delete?id=<%=p.getId()%>" class='text-dark'><i class="bi bi-trash"></i></a></td>
+                <form id="delete-form" action="../deleteProduct" method="post">
+                    <table id="dataTable" class="table table-striped text-center">
+                        <thead class="bg-dark">
+                        <tr class="text-light">
+                            <th>ID</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Hình ảnh sản phẩm</th>
+                            <th>Giá nhập vào</th>
+                            <th>Giá bán ra</th>
+                            <th>Số lượng tồn kho</th>
+                            <th>Nhập thêm số lượng</th>
+                            <th>Chỉnh sửa</th>
+                            <th>Xóa</th>
+                            <th>
+                                <button type="button" id="select-all" class="btn btn-primary btn-sm ml-2">Chọn tất cả</button>
+                            </th>
+                            <th>
+                                <button type="button" id="delete-selected" class="btn btn-danger btn-sm ml-2">Xóa</button>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody class="bg-light text-dark">
+                        <%
+                            for (Product p : allList) {
+                                if (p != null) {
+                        %>
+                        <tr class='text-center text-dark font-weight-normal'>
+                            <td><%= p.getId() %></td>
+                            <td><%= p.getTitle() %></td>
+                            <td><img width="50" height="50" class='cart_img' src='../DataWeb/<%= p.getImage() %>'></td>
+                            <td><%= p.getPriceIn() + "/" + p.getUnitPrice() + p.getUnit() %></td>
+                            <td><%= p.getPrice() + "/" + p.getUnitPrice() + p.getUnit() %></td>
+                            <td><%= p.getQuantity() %></td>
+                            <td><a href="add_product_quantity.jsp?id=<%= p.getId() %>" class='text-dark justify-content-center text-center'><i class="bi bi-plus-square"></i></a></td>
+                            <td><a href="edit_products.jsp?id=<%= p.getId() %>" class='text-dark justify-content-center text-center'><i class="bi bi-pencil-square"></i></a></td>
+                            <td><a href="../delete?id=<%= p.getId() %>" class='text-dark justify-content-center text-center'><i class="bi bi-trash"></i></a></td>
+                            <td>
+                                <div class="form-check justify-content-center text-center">
+                                    <input class="form-check-input order-checkbox" type="checkbox" name="orderCheckbox" value="<%= p.getId() %>" id="<%= p.getId() %>">
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
                         <%
                                 }
                             }
                         %>
-                    </tr>
-
-                    </tbody>
-                </table>
-
+                        </tbody>
+                    </table>
+                </form>
             </div>
+
         </section>
     </div>
 
 </div>
+<script>
+    document.getElementById('select-all').addEventListener('click', function () {
+        const checkboxes = document.querySelectorAll('.order-checkbox');
+        checkboxes.forEach(checkbox => checkbox.checked = !checkbox.checked);
+        updateSelectAllButtonState();
+    });
+
+    function updateSelectAllButtonState() {
+        const checkboxes = document.querySelectorAll('.order-checkbox');
+        const selectAllButton = document.getElementById('select-all');
+
+        let allChecked = true;
+        checkboxes.forEach(checkbox => {
+            if (!checkbox.checked) {
+                allChecked = false;
+            }
+        });
+
+        if (allChecked && checkboxes.length > 0) {
+            selectAllButton.textContent = 'Bỏ chọn tất cả';
+        } else {
+            selectAllButton.textContent = 'Chọn tất cả';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        updateSelectAllButtonState();
+    });
+
+    // Xử lý khi có checkbox thay đổi trạng thái
+    document.querySelectorAll('.order-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            updateSelectAllButtonState();
+        });
+    });
+
+    // Xử lý khi nhấn nút "Xóa"
+    document.getElementById('delete-selected').addEventListener('click', function () {
+        document.getElementById('delete-form').submit();
+    });
+</script>
+
+
 <script>
     new DataTable('#dataTable', {
         language: {
@@ -298,13 +341,18 @@
                 next: "Trang sau",
                 last: "Trang cuối"
             },
+
             aria: {
                 sortAscending: "sắp xếp tăng dần",
                 sortDescending: "sắp xếp giảm dần",
             }
         },
+        columnDefs: [
+            { orderable: false, targets: [ 7,8,9,10] } // Chỉ định các cột cần tắt sắp xếp, chỉ số cột bắt đầu từ 0
+        ],
     });
 </script>
+
 
 <!-- REQUIRED SCRIPTS -->
 <script src="../js/jquery.min.js"></script>

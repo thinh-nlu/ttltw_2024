@@ -23,7 +23,7 @@ public class ProductDAO {
     public boolean addProduct(Product p) {
         boolean isAdd = false;
         query = "insert into products(title,image,price,price_in,unit,categoryId,keyword,status,insertDate,quantity,unitPrice,descrip) " +
-                "values(?,?,?,?,?,?,?,NOW(),?,?,?)";
+                "values(?,?,?,?,?,?,?,?,NOW(),?,?,?)";
         try {
             ps = con.prepareStatement(query);
             ps.setString(1,p.getTitle());

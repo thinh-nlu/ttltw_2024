@@ -131,21 +131,19 @@
                     <li class="nav-item">
                         <a href="insert-product.jsp" class="nav-link">
                             <i class="bi bi-plus-square"></i>
-                            <p>
-                                Thêm sản phẩm
-                            </p>
+                            <p>Thêm sản phẩm</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="list-products.jsp" class="nav-link">
                             <i class="bi bi-box-seam"></i>
-                            <p>Quản lí sản phẩm </p>
+                            <p>Quản lí sản phẩm</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="warehouse.jsp" class="nav-link">
                             <i class="bi bi-boxes"></i>
-                            <p>Quản lí kho </p>
+                            <p>Quản lí kho</p>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -155,47 +153,38 @@
                         </a>
                     </li>
 
+                    <%-- Conditionally render user management link based on isAdmin value --%>
+                    <% String isAdmin = user.getIsAdmin(); %>
                     <li class="nav-item">
+                        <% if ("0".equals(isAdmin)) { %>
                         <a href="list-user.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
                             <p>Quản lí người dùng</p>
                         </a>
+                        <% } else if ("3".equals(isAdmin)) { %>
+                        <a href="list_user_customer.jsp" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <p>Quản lí người dùng</p>
+                        </a>
+                        <% } %>
                     </li>
 
+                    <%-- Other menu items --%>
                     <li class="nav-item">
                         <a href="list-oders.jsp" class="nav-link">
                             <i class="bi bi-basket"></i>
                             <p>Quản lí đơn hàng</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <p>Giám sát đơn hàng</p>
-                        </a>
-                    </li>
 
-                    <%-- Kiểm tra và ẩn menu nếu isAdmin là 3 --%>
-                    <%   String isAdmin = user.getIsAdmin();
-                        if (!isAdmin.equals("3")) { %>
-
-
-
-
+                    <%-- Hide specific menu items if isAdmin is 3 --%>
+                    <% if (!"3".equals(isAdmin)) { %>
                     <li class="nav-item">
                         <a href="edit_role.jsp" class="nav-link">
                             <i class="bi bi-person"></i>
-                            <p>Quản lí quyền hạng</p>
+                            <p>Quản lí quyền hạn</p>
                         </a>
                     </li>
-
-                    <li class="nav-item">
-                        <a href="list-employee.jsp" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <p>Quản lí nhân viên</p>
-                        </a>
-                    </li>
-
                     <li class="nav-item">
                         <a href="list-log.jsp" class="nav-link">
                             <i class="bi bi-clipboard2-data-fill"></i>
@@ -210,10 +199,9 @@
                             <p>Khuyến mãi sản phẩm</p>
                         </a>
                     </li>
-
-
                 </ul>
             </nav>
+
         </div>
     </aside>
 
@@ -253,7 +241,12 @@
                         <th>IP</th>
                         <th>Nội Dung</th>
                         <th>Thời gian</th>
-                        <th></th>
+                        <th colspan="1">
+                           <button id="select-all" class="btn btn-primary btn-sm ml-2">Chọn tất cả</button>
+                        </th>
+                        <th>
+                            <button id="delete-logs" class="btn btn-danger btn-sm ml-2">Xóa</button>
+                        </th>
                     </tr>
                     </thead>
                     <tbody class="bg-light text-dark">
@@ -295,7 +288,12 @@
                         <td><%= l.getIp() %></td>
                         <td><%= l.getContent() %></td>
                         <td><%= l.getCreatAt() %></td>
-                        <td><a class='text-dark' onclick="deleteLog(<%= l.getId() %>)"><i class="bi bi-trash"></i></a></td>
+                        <td><a class='text-dark hover' onclick="deleteLog(<%= l.getId() %>)"><i class="bi bi-trash"></i></a></td>
+                        <td colspan="2">
+                            <div class="form-check justify-content-center text-center">
+                                <input class="form-check-input order-checkbox" type="checkbox" name="orderCheckbox" value="<%=l.getId()%>" id="<%=l.getId()%>">
+                            </div>
+                        </td>
                     </tr>
                     <%
                             }
@@ -390,6 +388,9 @@
                                 sortDescending: "sắp xếp giảm dần",
                             }
                         },
+                        columnDefs: [
+                            { orderable: false, targets: [ 7, 8] } // Chỉ định các cột cần tắt sắp xếp, chỉ số cột bắt đầu từ 0
+                        ],
                         layout: {
                             bottomEnd: {
                                 paging: {
@@ -397,6 +398,47 @@
                                 }
                             }
                         }
+                    });
+                </script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const selectAllButton = document.getElementById('select-all');
+                        const deleteOrdersButton = document.getElementById('delete-logs');
+                        const checkboxes = document.querySelectorAll('.order-checkbox');
+
+                        selectAllButton.addEventListener('click', function() {
+                            checkboxes.forEach(checkbox => {
+                                checkbox.checked = !checkbox.checked;
+                            });
+                        });
+
+                        deleteOrdersButton.addEventListener('click', function() {
+                            const selectedOrderIds = Array.from(checkboxes)
+                                .filter(checkbox => checkbox.checked)
+                                .map(checkbox => checkbox.value);
+
+                            if (selectedOrderIds.length > 0) {
+                                if (confirm('Bạn có chắc chắn muốn xóa log này không?')) {
+                                    const form = document.createElement('form');
+                                    form.method = 'GET';
+                                    form.action = '${pageContext.request.contextPath}/RemoveLogAdmin';
+
+                                    selectedOrderIds.forEach(orderId => {
+                                        const input = document.createElement('input');
+                                        input.type = 'hidden';
+                                        input.name = 'id';
+                                        input.value = orderId;
+                                        form.appendChild(input);
+                                    });
+
+                                    document.body.appendChild(form);
+                                    form.submit();
+
+                                }
+                            } else {
+                                alert('Vui lòng chọn ít nhất một log để xóa.');
+                            }
+                        });
                     });
                 </script>
 
