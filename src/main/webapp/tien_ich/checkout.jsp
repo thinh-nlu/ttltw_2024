@@ -231,18 +231,7 @@
                                     <span class="me-3">Ngày: <%=order.getOrderDate()%></span>
                                     <span class="me-3"> #<%=order.getInvoiceNumber()%></span>
                                 </div>
-                                <div class="d-flex">
-                                    <button class="btn btn-link p-0 me-3 d-none d-lg-block btn-icon-text"><i class="bi bi-download"></i> <span class="text">Invoice</span></button>
-                                    <div class="dropdown">
-                                        <button class="btn btn-link p-0 text-muted" type="button" data-bs-toggle="dropdown">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#"><i class="bi bi-pencil"></i> Edit</a></li>
-                                            <li><a class="dropdown-item" href="#"><i class="bi bi-printer"></i> Print</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
+
                             </div>
                             <table class="table table-borderless">
                                 <tbody>
